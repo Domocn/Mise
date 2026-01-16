@@ -1,11 +1,20 @@
 import axios from 'axios';
 
-// Get server URL - check localStorage first, then fall back to env
+// Runtime backend URL - this placeholder gets replaced by docker-entrypoint.sh at container startup
+// DO NOT CHANGE this string - it must match the placeholder in docker-entrypoint.sh
+const RUNTIME_BACKEND_URL = '%REACT_APP_BACKEND_URL%';
+
+// Get server URL - check localStorage first, then runtime env, then fallback
 const getServerUrl = () => {
   const savedUrl = localStorage.getItem('mise_server_url');
   if (savedUrl) {
     return savedUrl;
   }
+  // Check if runtime placeholder was replaced (doesn't start with %)
+  if (RUNTIME_BACKEND_URL && !RUNTIME_BACKEND_URL.startsWith('%')) {
+    return RUNTIME_BACKEND_URL;
+  }
+  // Fallback to build-time env or empty
   return process.env.REACT_APP_BACKEND_URL || '';
 };
 
