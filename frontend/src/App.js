@@ -96,9 +96,9 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ErrorBoundary>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
           <AppRoutes />
           <InstallPrompt />
           <Toaster
@@ -112,9 +112,9 @@ function App() {
               className: 'font-sans',
             }}
           />
-        </ErrorBoundary>
-      </AuthProvider>
-    </BrowserRouter>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

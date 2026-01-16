@@ -18,35 +18,52 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('user');
-      
-      if (token && savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-          const res = await authApi.me();
-          setUser(res.data);
-          localStorage.setItem('user', JSON.stringify(res.data));
-          
-          // Fetch household - wrap in separate try-catch to not logout on failure
-          if (res.data.household_id) {
-            try {
-              const hRes = await householdApi.getMy();
-              setHousehold(hRes.data);
-            } catch (householdError) {
-              console.error('Failed to fetch household during init:', householdError);
-              // Don't logout if household fetch fails
-            }
+      try {
+        const token = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
+
+        if (token && savedUser) {
+          let parsedUser;
+          try {
+            parsedUser = JSON.parse(savedUser);
+          } catch (parseError) {
+            console.error('Failed to parse saved user:', parseError);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setLoading(false);
+            return;
           }
-        } catch (error) {
-          console.error('Auth init error:', error);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+
+          try {
+            setUser(parsedUser);
+            const res = await authApi.me();
+            setUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+
+            // Fetch household - wrap in separate try-catch to not logout on failure
+            if (res.data.household_id) {
+              try {
+                const hRes = await householdApi.getMy();
+                setHousehold(hRes.data);
+              } catch (householdError) {
+                console.error('Failed to fetch household during init:', householdError);
+                // Don't logout if household fetch fails
+              }
+            }
+          } catch (error) {
+            console.error('Auth init error:', error);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+          }
         }
+      } catch (outerError) {
+        console.error('Unexpected error in initAuth:', outerError);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-    
+
     initAuth();
   }, []);
 
