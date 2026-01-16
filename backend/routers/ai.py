@@ -84,10 +84,11 @@ Return exactly this format (no markdown, no explanation):
 }
 If times aren't specified, estimate reasonable values. Categories: Breakfast, Lunch, Dinner, Dessert, Appetizer, Snack, Beverage, Other"""
 
+    # Truncate to fit embedded model context windows (~2048 tokens)
     result = await call_llm(
         request.app.state.http_client,
         system_prompt,
-        f"Parse this recipe:\n{data.text[:6000]}",
+        f"Parse this recipe:\n{data.text[:3000]}",
         user["id"]
     )
 
@@ -116,7 +117,8 @@ async def auto_generate_meal_plan(
     if len(recipes) < 3:
         raise HTTPException(status_code=400, detail="Need at least 3 recipes to generate a meal plan")
 
-    recipes_summary = [{"id": r["id"], "title": r["title"], "category": r["category"], "tags": r.get("tags", [])} for r in recipes]
+    # Limit recipes and use compact JSON to fit in context window
+    recipes_summary = [{"id": r["id"], "title": r["title"], "category": r["category"]} for r in recipes[:30]]
 
     system_prompt = """You are a meal planning assistant. Create a balanced weekly meal plan using the available recipes.
 Return ONLY valid JSON in this format:
@@ -138,7 +140,7 @@ Preferences: {data.preferences or 'balanced variety'}
 Exclude recipes: {data.exclude_recipes or 'none'}
 
 Available recipes:
-{json.dumps(recipes_summary, indent=2)}"""
+{json.dumps(recipes_summary)}"""
 
     result = await call_llm(request.app.state.http_client, system_prompt, user_prompt, user["id"])
 
@@ -202,12 +204,13 @@ Return ONLY valid JSON in this format (no markdown, no explanation):
 }
 If search_online is true and you want to suggest a NEW recipe, set ai_suggestion to a recipe object instead of null."""
 
-        recipes_info = [{"id": r["id"], "title": r["title"], "ingredients": [i.get("name", i) if isinstance(i, dict) else i for i in r.get("ingredients", [])]} for r in all_recipes]
+        # Limit recipes and use compact JSON to fit in context window
+        recipes_info = [{"id": r["id"], "title": r["title"], "ingredients": [i.get("name", i) if isinstance(i, dict) else i for i in r.get("ingredients", [])][:10]} for r in all_recipes[:25]]
 
         user_prompt = f"""Available ingredients: {ingredients_str}
 
 Existing recipes:
-{json.dumps(recipes_info, indent=2) if recipes_info else "No existing recipes yet."}
+{json.dumps(recipes_info) if recipes_info else "No existing recipes yet."}
 
 Find matching recipes{" and suggest a new simple recipe" if data.search_online else ""}."""
 
