@@ -81,7 +81,7 @@ services:
       # Set this to your server's IP/hostname accessible from client browsers
       - REACT_APP_BACKEND_URL=${BACKEND_URL:-http://localhost:8001}
       - REACT_APP_OPENPANEL_URL=http://localhost:3002/api
-      - REACT_APP_OPENPANEL_CLIENT_ID=00000000-0000-0000-0000-000000000000
+      - REACT_APP_OPENPANEL_CLIENT_ID=fix-white-screen-2
     depends_on:
       - backend
     networks:
