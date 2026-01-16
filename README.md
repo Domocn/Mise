@@ -51,6 +51,7 @@ Open **http://localhost:3000** and create an account.
 1. Generate a secret: `openssl rand -base64 32`
 2. Replace `<32-byte-secret>` in docker-compose with your generated key
 3. Deploy and create your account
+4. Go to `http://host-ip:3001/server` to configure the server connection
 
 ### Docker Compose File
 
