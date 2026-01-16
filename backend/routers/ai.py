@@ -26,7 +26,8 @@ async def import_recipe_from_url(
         for element in soup(['script', 'style', 'nav', 'footer', 'header']):
             element.decompose()
 
-        text_content = soup.get_text(separator='\n', strip=True)[:8000]
+        # Truncate content to fit in small model context windows (embedded models have ~2048 tokens)
+        text_content = soup.get_text(separator='\n', strip=True)[:3000]
 
         system_prompt = """You are a recipe extraction assistant. Extract recipe information from webpage content and return ONLY valid JSON.
 Return exactly this format (no markdown, no explanation):
