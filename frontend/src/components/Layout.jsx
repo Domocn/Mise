@@ -24,7 +24,8 @@ import {
   Sparkles,
   Globe,
   Moon,
-  Sun
+  Sun,
+  User
 } from 'lucide-react';
 
 const navItems = [
@@ -36,7 +37,7 @@ const navItems = [
 ];
 
 export const Layout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, household, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [version, setVersion] = useState('1.0.0');
