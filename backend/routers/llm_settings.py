@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from models import LLMSettingsUpdate
-from dependencies import db, get_current_user, settings
+from ..models import LLMSettingsUpdate
+from ..dependencies import db, get_current_user, settings
 from datetime import datetime, timezone
 import httpx
 import os

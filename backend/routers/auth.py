@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from models import UserCreate, UserLogin, UserResponse
-from dependencies import db, hash_password, verify_password, create_token, get_current_user
+from ..models import UserCreate, UserLogin, UserResponse
+from ..dependencies import db, hash_password, verify_password, create_token, get_current_user
 import uuid
 import asyncio
 from datetime import datetime, timezone

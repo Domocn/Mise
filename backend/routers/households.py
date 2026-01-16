@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from models import HouseholdCreate, HouseholdResponse, UserResponse, HouseholdInvite
-from dependencies import db, get_current_user
+from ..models import HouseholdCreate, HouseholdResponse, UserResponse, HouseholdInvite
+from ..dependencies import db, get_current_user
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional

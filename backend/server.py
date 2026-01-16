@@ -4,11 +4,11 @@ from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 import httpx
-from config import settings
-from dependencies import db, client
+from .config import settings
+from .dependencies import db, client
 
 # Import routers
-from routers import (
+from .routers import (
     auth, households, recipes, ai, meal_plans, shopping_lists,
     homeassistant, notifications, calendar, import_data, llm_settings,
     favorites
@@ -41,7 +41,7 @@ async def lifespan(app: FastAPI):
     await app.state.http_client.aclose()
     client.close()
 
-app = FastAPI(lifespan=lifespan, title="Mise API")
+app = FastAPI(lifespan=lifespan, title="Kitchenry API")
 api_router = APIRouter(prefix="/api")
 
 # Include routers
@@ -88,7 +88,7 @@ async def health_check():
     """Health check endpoint for server discovery"""
     return {
         "status": "healthy",
-        "app": "Mise",
+        "app": "Kitchenry",
         "version": "1.0.0",
         "llm_provider": settings.llm_provider
     }

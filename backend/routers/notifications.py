@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from dependencies import db, get_current_user
+from ..dependencies import db, get_current_user
 from datetime import datetime, timezone
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])

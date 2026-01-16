@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Query
-from models import RecipeCreate, RecipeResponse
-from dependencies import db, get_current_user
-from config import settings
+from ..models import RecipeCreate, RecipeResponse
+from ..dependencies import db, get_current_user
+from ..config import settings
 import uuid
 import aiofiles
 from datetime import datetime, timezone, timedelta

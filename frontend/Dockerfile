@@ -1,13 +1,13 @@
 # Build stage
-FROM node:20-alpine AS build
+FROM node:20-alpine as build
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN npm ci --legacy-peer-deps
+RUN yarn install --frozen-lockfile
 
 # Copy source
 COPY . .
@@ -18,7 +18,7 @@ ARG REACT_APP_BACKEND_URL=%REACT_APP_BACKEND_URL%
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 
 # Build the app
-RUN npm run build
+RUN yarn build
 
 # Production stage
 FROM nginx:alpine
