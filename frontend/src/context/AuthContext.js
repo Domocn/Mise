@@ -42,6 +42,8 @@ export const AuthProvider = ({ children }) => {
           console.error('Auth init error:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          setUser(null);
+          setHousehold(null);
         }
       }
       setLoading(false);
