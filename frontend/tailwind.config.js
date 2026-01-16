@@ -78,6 +78,16 @@ module.exports = {
                                 paper: '#FFFFFF',
                                 subtle: '#F0EFFF',
                         },
+                        sage: {
+                                DEFAULT: '#4A6741',
+                                light: '#E8F0E6',
+                                dark: '#3D5636',
+                        },
+                        terracotta: {
+                                DEFAULT: '#C75B39',
+                                light: '#F5E0D8',
+                                dark: '#A84D30',
+                        },
                 },
                 keyframes: {
                         'accordion-down': {
