@@ -17,9 +17,7 @@ import {
   CalendarDays,
   ShoppingCart,
   Refrigerator,
-  Users,
   LogOut,
-  User,
   Plus,
   Link as LinkIcon,
   Settings,
@@ -38,7 +36,7 @@ const navItems = [
 ];
 
 export const Layout = ({ children }) => {
-  const { user, household, logout } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [version, setVersion] = useState('1.0.0');
@@ -196,15 +194,6 @@ export const Layout = ({ children }) => {
                       <div>
                         <p className="text-sm">Settings</p>
                         <p className="text-xs text-muted-foreground">Manage your account</p>
-                      </div>
-                    </DropdownMenuItem>
-
-                    {/* Household */}
-                    <DropdownMenuItem onClick={() => navigate('/household')} className="py-2.5 px-4 cursor-pointer" data-testid="menu-household">
-                      <Users className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">{household ? 'My Household' : 'Create Household'}</p>
-                        <p className="text-xs text-muted-foreground">{household?.name || 'Share with family'}</p>
                       </div>
                     </DropdownMenuItem>
                   </div>
