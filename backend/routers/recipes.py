@@ -4,11 +4,16 @@ from dependencies import db, get_current_user
 from config import settings
 import uuid
 import aiofiles
+import re
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from pathlib import Path
 
 router = APIRouter(prefix="/recipes", tags=["Recipes"])
+
+def escape_regex(text: str) -> str:
+    """Escape special regex characters to prevent ReDoS attacks"""
+    return re.escape(text)
 
 # Ensure upload directory exists
 UPLOAD_DIR = Path(settings.upload_dir)
@@ -69,12 +74,14 @@ async def get_recipes(
         query["category"] = category
     
     if search:
+        # Escape special regex characters to prevent ReDoS attacks
+        safe_search = escape_regex(search)
         query["$and"] = query.get("$and", [])
         query["$and"].append({
             "$or": [
-                {"title": {"$regex": search, "$options": "i"}},
-                {"description": {"$regex": search, "$options": "i"}},
-                {"tags": {"$regex": search, "$options": "i"}}
+                {"title": {"$regex": safe_search, "$options": "i"}},
+                {"description": {"$regex": safe_search, "$options": "i"}},
+                {"tags": {"$regex": safe_search, "$options": "i"}}
             ]
         })
     

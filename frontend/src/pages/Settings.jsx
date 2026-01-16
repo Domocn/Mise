@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
-import { configApi, llmApi, notificationApi } from '../lib/api';
+import { configApi, llmApi, notificationApi, promptsApi, authApi, householdApi, importApi } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -14,10 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { 
-  Settings as SettingsIcon, 
-  Server, 
-  User, 
+import {
+  Settings as SettingsIcon,
+  Server,
+  User,
+  Users,
   LogOut,
   Cpu,
   Globe,
@@ -37,16 +38,35 @@ import {
   BellOff,
   Moon,
   Sun,
-  Palette
+  Palette,
+  Edit3,
+  RotateCcw,
+  FileText,
+  Trash2,
+  AlertTriangle,
+  Upload,
+  Copy,
+  UserPlus,
+  Key,
+  Shield,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Switch } from '../components/ui/switch';
 
+const tabs = [
+  { id: 'user', label: 'User', icon: User },
+  { id: 'ai', label: 'AI', icon: Sparkles },
+  { id: 'household', label: 'Household', icon: Users },
+  { id: 'admin', label: 'Admin', icon: Server },
+];
+
 export const Settings = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, household, logout } = useAuth();
   const [serverInfo, setServerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('user');
   
   // LLM Settings
   const [llmSettings, setLlmSettings] = useState({
@@ -72,6 +92,43 @@ export const Settings = () => {
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [savingNotifications, setSavingNotifications] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+
+  // Custom AI Prompts
+  const [customPrompts, setCustomPrompts] = useState({
+    recipe_extraction: '',
+    meal_planning: '',
+    fridge_search: ''
+  });
+  const [defaultPrompts, setDefaultPrompts] = useState({});
+  const [savingPrompts, setSavingPrompts] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState(null);
+
+  // Profile Settings
+  const [profileName, setProfileName] = useState('');
+  const [profileEmail, setProfileEmail] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  // Allergies
+  const [allergies, setAllergies] = useState([]);
+  const [newAllergy, setNewAllergy] = useState('');
+  const [savingAllergies, setSavingAllergies] = useState(false);
+
+  // Household
+  const [householdMembers, setHouseholdMembers] = useState([]);
+  const [joinCode, setJoinCode] = useState(null);
+  const [joinCodeExpires, setJoinCodeExpires] = useState(null);
+  const [joinCodeInput, setJoinCodeInput] = useState('');
+  const [generatingCode, setGeneratingCode] = useState(false);
+  const [joiningHousehold, setJoiningHousehold] = useState(false);
+
+  // Import
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
+
+  // Danger Zone
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   // Theme Settings
   const [darkMode, setDarkMode] = useState(() => {
@@ -112,10 +169,11 @@ export const Settings = () => {
 
   const loadData = async () => {
     try {
-      const [serverRes, llmRes, notifRes] = await Promise.all([
+      const [serverRes, llmRes, notifRes, promptsRes] = await Promise.all([
         configApi.getConfig(),
         llmApi.getSettings(),
-        notificationApi.getSettings().catch(() => ({ data: {} }))
+        notificationApi.getSettings().catch(() => ({ data: {} })),
+        promptsApi.get().catch(() => ({ data: {} }))
       ]);
       setServerInfo(serverRes.data);
       setLlmSettings({
@@ -127,7 +185,7 @@ export const Settings = () => {
       if (llmRes.data.embedded_models) {
         setEmbeddedModels(llmRes.data.embedded_models);
       }
-      
+
       // Load notification settings
       if (notifRes.data) {
         setNotificationSettings(prev => ({
@@ -138,6 +196,43 @@ export const Settings = () => {
           weekly_plan_reminder: notifRes.data.weekly_plan_reminder ?? true,
           enabled: notifRes.data.enabled ?? false
         }));
+      }
+
+      // Load custom prompts
+      if (promptsRes.data) {
+        setCustomPrompts({
+          recipe_extraction: promptsRes.data.recipe_extraction || '',
+          meal_planning: promptsRes.data.meal_planning || '',
+          fridge_search: promptsRes.data.fridge_search || ''
+        });
+        if (promptsRes.data.defaults) {
+          setDefaultPrompts(promptsRes.data.defaults);
+        }
+      }
+
+      // Load user profile
+      const userRes = await authApi.me();
+      if (userRes.data) {
+        setProfileName(userRes.data.name || '');
+        setProfileEmail(userRes.data.email || '');
+        setAllergies(userRes.data.allergies || []);
+      }
+
+      // Load household members and join code
+      if (user?.household_id) {
+        try {
+          const [membersRes, householdRes] = await Promise.all([
+            householdApi.getMembers(),
+            householdApi.getMy()
+          ]);
+          setHouseholdMembers(membersRes.data || []);
+          if (householdRes.data) {
+            setJoinCode(householdRes.data.join_code || null);
+            setJoinCodeExpires(householdRes.data.join_code_expires || null);
+          }
+        } catch (e) {
+          console.error('Failed to load household data:', e);
+        }
       }
     } catch (error) {
       console.error('Failed to load settings:', error);
@@ -309,6 +404,173 @@ export const Settings = () => {
     }
   };
 
+  const handleSavePrompt = async (promptType) => {
+    setSavingPrompts(true);
+    try {
+      await promptsApi.update({ [promptType]: customPrompts[promptType] });
+      toast.success('Custom prompt saved!');
+      setEditingPrompt(null);
+    } catch (error) {
+      toast.error('Failed to save prompt');
+    } finally {
+      setSavingPrompts(false);
+    }
+  };
+
+  const handleResetPrompt = async (promptType) => {
+    setCustomPrompts(prev => ({ ...prev, [promptType]: '' }));
+    try {
+      await promptsApi.update({ [promptType]: null });
+      toast.success('Prompt reset to default');
+    } catch (error) {
+      toast.error('Failed to reset prompt');
+    }
+  };
+
+  const handleResetAllPrompts = async () => {
+    try {
+      await promptsApi.reset();
+      setCustomPrompts({
+        recipe_extraction: '',
+        meal_planning: '',
+        fridge_search: ''
+      });
+      toast.success('All prompts reset to defaults');
+    } catch (error) {
+      toast.error('Failed to reset prompts');
+    }
+  };
+
+  // Profile handlers
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    try {
+      await authApi.updateProfile({ name: profileName, email: profileEmail });
+      toast.success('Profile updated!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update profile');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  // Allergy handlers
+  const handleAddAllergy = () => {
+    if (newAllergy.trim() && !allergies.includes(newAllergy.trim().toLowerCase())) {
+      setAllergies([...allergies, newAllergy.trim().toLowerCase()]);
+      setNewAllergy('');
+    }
+  };
+
+  const handleRemoveAllergy = (allergy) => {
+    setAllergies(allergies.filter(a => a !== allergy));
+  };
+
+  const handleSaveAllergies = async () => {
+    setSavingAllergies(true);
+    try {
+      await authApi.updateProfile({ allergies });
+      toast.success('Allergies saved!');
+    } catch (error) {
+      toast.error('Failed to save allergies');
+    } finally {
+      setSavingAllergies(false);
+    }
+  };
+
+  // Household handlers
+  const handleGenerateJoinCode = async () => {
+    setGeneratingCode(true);
+    try {
+      const res = await householdApi.generateJoinCode();
+      setJoinCode(res.data.join_code);
+      setJoinCodeExpires(res.data.expires);
+      toast.success('Join code generated!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to generate join code');
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
+  const handleRevokeJoinCode = async () => {
+    try {
+      await householdApi.revokeJoinCode();
+      setJoinCode(null);
+      setJoinCodeExpires(null);
+      toast.success('Join code revoked');
+    } catch (error) {
+      toast.error('Failed to revoke join code');
+    }
+  };
+
+  const handleJoinHousehold = async () => {
+    if (!joinCodeInput.trim()) return;
+    setJoiningHousehold(true);
+    try {
+      await householdApi.joinWithCode(joinCodeInput.trim());
+      toast.success('Joined household!');
+      window.location.reload();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to join household');
+    } finally {
+      setJoiningHousehold(false);
+    }
+  };
+
+  const copyJoinCode = () => {
+    navigator.clipboard.writeText(joinCode);
+    toast.success('Join code copied!');
+  };
+
+  // Import handlers
+  const handleImportFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImporting(true);
+    try {
+      const content = await file.text();
+      let platform = 'json';
+
+      if (file.name.endsWith('.paprikarecipes') || file.name.includes('paprika')) {
+        platform = 'paprika';
+      } else if (file.name.includes('mealie') || file.name.includes('tandoor')) {
+        platform = 'cookmate';
+      }
+
+      const res = await importApi.fromPlatform(platform, content);
+      toast.success(res.data.message || `Imported ${res.data.imported} recipes!`);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to import recipes');
+    } finally {
+      setImporting(false);
+      e.target.value = '';
+    }
+  };
+
+  // Delete account handler
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') return;
+    setDeleting(true);
+    try {
+      await authApi.deleteAccount();
+      toast.success('Account deleted');
+      logout();
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete account');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const promptLabels = {
+    recipe_extraction: { name: 'Recipe Extraction', description: 'Used when importing recipes from URLs or text' },
+    meal_planning: { name: 'Meal Planning', description: 'Used when generating meal plans' },
+    fridge_search: { name: 'Fridge Search', description: 'Used when finding recipes by ingredients' }
+  };
+
   const currentServer = localStorage.getItem('mise_server_url') || process.env.REACT_APP_BACKEND_URL;
   const isLocalServer = currentServer?.includes('localhost') || currentServer?.includes('192.168');
 
@@ -328,7 +590,37 @@ export const Settings = () => {
           <p className="text-muted-foreground mt-1">Manage your app preferences</p>
         </motion.div>
 
-        {/* Account Section */}
+        {/* Tab Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white dark:bg-card rounded-xl border border-border/60 p-1 flex gap-1"
+        >
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-sage text-white shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-cream-subtle'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* User Tab Content */}
+        {activeTab === 'user' && (
+          <>
+        {/* Profile Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -341,15 +633,37 @@ export const Settings = () => {
               Account
             </h2>
           </div>
-          
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{user?.name}</p>
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
+
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-sage/20 flex items-center justify-center text-sage text-xl font-semibold">
+                {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
               </div>
-              <Button 
-                variant="outline" 
+              <div className="flex-1 space-y-3">
+                <div>
+                  <Label htmlFor="profile-name" className="text-xs text-muted-foreground">Name</Label>
+                  <Input
+                    id="profile-name"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    className="rounded-lg mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="profile-email" className="text-xs text-muted-foreground">Email</Label>
+                  <Input
+                    id="profile-email"
+                    type="email"
+                    value={profileEmail}
+                    onChange={(e) => setProfileEmail(e.target.value)}
+                    className="rounded-lg mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
                 className="rounded-full text-destructive border-destructive/30 hover:bg-destructive hover:text-white"
                 onClick={handleLogout}
                 data-testid="logout-btn"
@@ -357,7 +671,74 @@ export const Settings = () => {
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
+              <Button
+                onClick={handleSaveProfile}
+                disabled={savingProfile}
+                className="rounded-full bg-sage hover:bg-sage-dark"
+              >
+                {savingProfile ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+                Save Changes
+              </Button>
             </div>
+          </div>
+        </motion.section>
+
+        {/* Allergies Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+        >
+          <div className="p-4 border-b border-border/60 bg-cream-subtle">
+            <h2 className="font-heading font-semibold flex items-center gap-2">
+              <Shield className="w-5 h-5 text-sage" />
+              Allergies
+            </h2>
+          </div>
+
+          <div className="p-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Add your food allergies to receive warnings when planning recipes that contain allergens.
+            </p>
+
+            <div className="flex gap-2">
+              <Input
+                placeholder="Type allergies (e.g., gluten, nuts, dairy)..."
+                value={newAllergy}
+                onChange={(e) => setNewAllergy(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddAllergy()}
+                className="rounded-lg flex-1"
+              />
+              <Button onClick={handleAddAllergy} variant="outline" className="rounded-lg">
+                Add
+              </Button>
+            </div>
+
+            {allergies.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {allergies.map((allergy) => (
+                  <span
+                    key={allergy}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-sm border border-amber-200"
+                  >
+                    {allergy}
+                    <button onClick={() => handleRemoveAllergy(allergy)} className="hover:text-amber-600">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <Button
+              onClick={handleSaveAllergies}
+              disabled={savingAllergies}
+              className="rounded-full bg-sage hover:bg-sage-dark"
+            >
+              {savingAllergies ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+              Save Allergies
+            </Button>
           </div>
         </motion.section>
 
@@ -365,7 +746,7 @@ export const Settings = () => {
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12 }}
+          transition={{ delay: 0.14 }}
           className="bg-white dark:bg-card rounded-2xl border border-border/60 overflow-hidden"
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
@@ -374,7 +755,7 @@ export const Settings = () => {
               Appearance
             </h2>
           </div>
-          
+
           <div className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -398,6 +779,119 @@ export const Settings = () => {
           </div>
         </motion.section>
 
+        {/* Import Recipe Archive Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.16 }}
+          className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+        >
+          <div className="p-4 border-b border-border/60 bg-cream-subtle">
+            <h2 className="font-heading font-semibold flex items-center gap-2">
+              <Upload className="w-5 h-5 text-sage" />
+              Import Recipe Archive
+            </h2>
+          </div>
+
+          <div className="p-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Import recipes from Mela (.melarecipes), Mealie, Tandoor, or Paprika (.zip) exports.
+            </p>
+
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:bg-cream-subtle transition-colors">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                {importing ? (
+                  <Loader2 className="w-8 h-8 text-sage animate-spin mb-2" />
+                ) : (
+                  <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                )}
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-sage">Upload a file</span> or drag and drop
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  .melarecipes (.html), .zip (Mealie, Tandoor, or Paprika export)
+                </p>
+              </div>
+              <input
+                type="file"
+                className="hidden"
+                accept=".json,.zip,.melarecipes,.html"
+                onChange={handleImportFile}
+                disabled={importing}
+              />
+            </label>
+          </div>
+        </motion.section>
+
+        {/* Danger Zone Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="bg-white rounded-2xl border border-red-200 overflow-hidden"
+        >
+          <div className="p-4 border-b border-red-200 bg-red-50">
+            <h2 className="font-heading font-semibold flex items-center gap-2 text-red-700">
+              <AlertTriangle className="w-5 h-5" />
+              Danger Zone
+            </h2>
+          </div>
+
+          <div className="p-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Once you delete your account, there is no going back. Please be certain.
+            </p>
+
+            {!showDeleteConfirm ? (
+              <Button
+                variant="outline"
+                className="rounded-full text-red-600 border-red-300 hover:bg-red-50"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete My Account
+              </Button>
+            ) : (
+              <div className="p-4 bg-red-50 rounded-xl space-y-3">
+                <p className="text-sm font-medium text-red-700">
+                  Type DELETE to confirm account deletion:
+                </p>
+                <Input
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className="rounded-lg border-red-300"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="rounded-full"
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setDeleteConfirmText('');
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleDeleteAccount}
+                    disabled={deleteConfirmText !== 'DELETE' || deleting}
+                    className="rounded-full bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                    Delete Account
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.section>
+          </>
+        )}
+
+        {/* AI Tab Content */}
+        {activeTab === 'ai' && (
+          <>
         {/* AI Settings Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -678,7 +1172,7 @@ export const Settings = () => {
             )}
 
             {/* Save Button */}
-            <Button 
+            <Button
               onClick={handleSaveLlm}
               disabled={savingLlm}
               className="rounded-full bg-mise hover:bg-mise-dark"
@@ -693,6 +1187,111 @@ export const Settings = () => {
           </div>
         </motion.section>
 
+        {/* Custom AI Prompts Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.16 }}
+          className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+        >
+          <div className="p-4 border-b border-border/60 bg-cream-subtle">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading font-semibold flex items-center gap-2">
+                <FileText className="w-5 h-5 text-sage" />
+                Custom AI Prompts
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResetAllPrompts}
+                className="text-xs text-muted-foreground hover:text-destructive"
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Reset All
+              </Button>
+            </div>
+          </div>
+
+          <div className="p-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Customize the AI prompts to adjust how recipes are extracted, meal plans are generated, and ingredient searches work.
+            </p>
+
+            {Object.entries(promptLabels).map(([key, label]) => (
+              <div key={key} className="border border-border/60 rounded-xl overflow-hidden">
+                <div
+                  className="p-3 bg-cream-subtle flex items-center justify-between cursor-pointer"
+                  onClick={() => setEditingPrompt(editingPrompt === key ? null : key)}
+                >
+                  <div>
+                    <p className="font-medium text-sm">{label.name}</p>
+                    <p className="text-xs text-muted-foreground">{label.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {customPrompts[key] && (
+                      <span className="text-xs bg-sage/20 text-sage px-2 py-0.5 rounded-full">
+                        Customized
+                      </span>
+                    )}
+                    <Edit3 className={`w-4 h-4 text-muted-foreground transition-transform ${editingPrompt === key ? 'rotate-45' : ''}`} />
+                  </div>
+                </div>
+
+                {editingPrompt === key && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="p-4 space-y-3"
+                  >
+                    <textarea
+                      value={customPrompts[key] || defaultPrompts[key] || ''}
+                      onChange={(e) => setCustomPrompts(prev => ({ ...prev, [key]: e.target.value }))}
+                      placeholder={defaultPrompts[key] || 'Enter custom prompt...'}
+                      className="w-full h-48 p-3 text-sm border border-border/60 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-sage/50 font-mono"
+                    />
+                    <div className="flex items-center justify-between">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleResetPrompt(key)}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-1" />
+                        Reset to Default
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleSavePrompt(key)}
+                        disabled={savingPrompts}
+                        className="rounded-full bg-sage hover:bg-sage-dark"
+                      >
+                        {savingPrompts ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-1" />
+                        )}
+                        Save
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            ))}
+
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+              <p className="text-xs text-amber-800">
+                <strong>Note:</strong> Custom prompts must maintain the JSON output format expected by the app.
+                If AI responses fail after customizing, reset to defaults.
+              </p>
+            </div>
+          </div>
+        </motion.section>
+          </>
+        )}
+
+        {/* Admin Tab Content */}
+        {activeTab === 'admin' && (
+          <>
         {/* Notifications Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -929,7 +1528,238 @@ export const Settings = () => {
             </div>
           </div>
         </motion.section>
+          </>
+        )}
 
+        {/* Household Tab Content */}
+        {activeTab === 'household' && (
+          <>
+        {household ? (
+          <>
+            {/* Household Info */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+            >
+              <div className="p-4 border-b border-border/60 bg-cream-subtle">
+                <h2 className="font-heading font-semibold flex items-center gap-2">
+                  <Users className="w-5 h-5 text-sage" />
+                  {household.name}
+                </h2>
+              </div>
+
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Your Role</p>
+                    <p className="font-medium">
+                      {household.owner_id === user?.id ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-sage/20 text-sage rounded text-xs">Admin</span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">Member</span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Members</p>
+                    <p className="font-medium">{householdMembers.length}</p>
+                  </div>
+                </div>
+                {household.owner_id !== user?.id && (
+                  <Button
+                    variant="outline"
+                    className="rounded-full text-red-600 border-red-300 hover:bg-red-50"
+                    onClick={async () => {
+                      try {
+                        await householdApi.leave();
+                        toast.success('Left household');
+                        window.location.reload();
+                      } catch (error) {
+                        toast.error(error.response?.data?.detail || 'Failed to leave household');
+                      }
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Leave Household
+                  </Button>
+                )}
+              </div>
+            </motion.section>
+
+            {/* Members Section */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 }}
+              className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+            >
+              <div className="p-4 border-b border-border/60 bg-cream-subtle">
+                <h2 className="font-heading font-semibold flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-sage" />
+                  Members
+                </h2>
+              </div>
+
+              <div className="divide-y divide-border/60">
+                {householdMembers.map((member) => (
+                  <div key={member.id} className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-sage/20 flex items-center justify-center text-sage text-sm font-medium">
+                        {member.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{member.name}</p>
+                        {member.id === user?.id && (
+                          <span className="text-xs text-sage">You</span>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-xs ${
+                      household.owner_id === member.id
+                        ? 'bg-sage/20 text-sage'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {household.owner_id === member.id ? 'Admin' : 'Member'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+
+            {/* Join Code Section (Owner Only) */}
+            {household.owner_id === user?.id && (
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.14 }}
+                className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+              >
+                <div className="p-4 border-b border-border/60 bg-cream-subtle">
+                  <h2 className="font-heading font-semibold flex items-center gap-2">
+                    <Key className="w-5 h-5 text-sage" />
+                    Join Code
+                  </h2>
+                </div>
+
+                <div className="p-4 space-y-4">
+                  {joinCode ? (
+                    <>
+                      <div className="p-4 bg-cream-subtle rounded-xl">
+                        <p className="text-sm text-muted-foreground mb-2">Share this code to invite members:</p>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 p-3 bg-white rounded-lg text-xl font-mono tracking-widest text-center border">
+                            {joinCode}
+                          </code>
+                          <Button variant="outline" size="icon" onClick={copyJoinCode} className="rounded-lg">
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Expires: {new Date(joinCodeExpires).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="rounded-full text-red-600 border-red-300 hover:bg-red-50"
+                        onClick={handleRevokeJoinCode}
+                      >
+                        Revoke Code
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        No active join code. Generate one to invite new members.
+                      </p>
+                      <Button
+                        onClick={handleGenerateJoinCode}
+                        disabled={generatingCode}
+                        className="rounded-full bg-sage hover:bg-sage-dark"
+                      >
+                        {generatingCode ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
+                        Generate Join Code
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </motion.section>
+            )}
+          </>
+        ) : (
+          <>
+            {/* No Household - Create or Join */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+            >
+              <div className="p-4 border-b border-border/60 bg-cream-subtle">
+                <h2 className="font-heading font-semibold flex items-center gap-2">
+                  <Users className="w-5 h-5 text-sage" />
+                  Join a Household
+                </h2>
+              </div>
+
+              <div className="p-4 space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Enter a join code to join an existing household and share recipes with family.
+                </p>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter join code..."
+                    value={joinCodeInput}
+                    onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
+                    className="rounded-lg font-mono tracking-widest"
+                    maxLength={8}
+                  />
+                  <Button
+                    onClick={handleJoinHousehold}
+                    disabled={joiningHousehold || !joinCodeInput.trim()}
+                    className="rounded-full bg-sage hover:bg-sage-dark"
+                  >
+                    {joiningHousehold ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Join'}
+                  </Button>
+                </div>
+              </div>
+            </motion.section>
+
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 }}
+              className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+            >
+              <div className="p-4 border-b border-border/60 bg-cream-subtle">
+                <h2 className="font-heading font-semibold flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-sage" />
+                  Create a Household
+                </h2>
+              </div>
+
+              <div className="p-4 space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Create a new household to share recipes, meal plans, and shopping lists with your family.
+                </p>
+                <Button
+                  onClick={() => navigate('/household')}
+                  className="rounded-full bg-sage hover:bg-sage-dark"
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Create Household
+                </Button>
+              </div>
+            </motion.section>
+          </>
+        )}
+          </>
+        )}
+
+        {/* Admin Tab - Feedback & Support */}
+        {activeTab === 'admin' && (
+          <>
         {/* Feedback & Support Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -943,9 +1773,9 @@ export const Settings = () => {
               Feedback & Support
             </h2>
           </div>
-          
+
           <div className="divide-y divide-border/60">
-            <a 
+            <a
               href="https://github.com/Domocn/Recipe-App/issues/new?template=bug_report.md&labels=bug"
               target="_blank"
               rel="noopener noreferrer"
@@ -994,6 +1824,8 @@ export const Settings = () => {
             </a>
           </div>
         </motion.section>
+          </>
+        )}
 
         {/* App Info */}
         <motion.section

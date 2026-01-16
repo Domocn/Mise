@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
 import { RecipeCard } from '../components/RecipeCard';
+import { TonightSuggestions } from '../components/TonightSuggestions';
 import { useAuth } from '../context/AuthContext';
 import { recipeApi, mealPlanApi } from '../lib/api';
 import { Button } from '../components/ui/button';
@@ -103,6 +104,15 @@ export const Dashboard = () => {
             );
           })}
         </motion.div>
+
+        {/* Tonight's Suggestions - The Core MVP Experience */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <TonightSuggestions />
+        </motion.section>
 
         {/* This Week's Meals */}
         <motion.section

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
+import { CookMode } from '../components/CookMode';
 import { useAuth } from '../context/AuthContext';
 import { recipeApi, mealPlanApi, shoppingListApi, shareApi } from '../lib/api';
 import { Button } from '../components/ui/button';
@@ -43,7 +44,8 @@ import {
   Heart,
   Printer,
   Minus,
-  Plus as PlusIcon
+  Plus as PlusIcon,
+  Play
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -69,6 +71,7 @@ export const RecipeDetail = () => {
   const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [scaledServings, setScaledServings] = useState(null);
   const [scaledIngredients, setScaledIngredients] = useState(null);
+  const [showCookMode, setShowCookMode] = useState(false);
   const recipeCardRef = useRef(null);
 
   // Generate formatted text for sharing
@@ -544,6 +547,13 @@ export const RecipeDetail = () => {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3 mb-8">
+              <Button
+                onClick={() => setShowCookMode(true)}
+                className="rounded-full bg-sage hover:bg-sage-dark"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Start Cooking
+              </Button>
               <Dialog open={showMealDialog} onOpenChange={setShowMealDialog}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="rounded-full" data-testid="add-to-meal-plan">
@@ -795,6 +805,11 @@ export const RecipeDetail = () => {
           </div>
         </motion.article>
       </div>
+
+      {/* Cook Mode */}
+      {showCookMode && (
+        <CookMode recipe={recipe} onClose={() => setShowCookMode(false)} />
+      )}
     </Layout>
   );
 };

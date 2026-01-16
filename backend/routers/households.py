@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
-from models import HouseholdCreate, HouseholdResponse, UserResponse, HouseholdInvite
+from models import HouseholdCreate, HouseholdResponse, UserResponse, HouseholdInvite, JoinHouseholdRequest
 from dependencies import db, get_current_user
 import uuid
-from datetime import datetime, timezone
+import secrets
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 
 router = APIRouter(prefix="/households", tags=["Households"])
@@ -66,6 +67,8 @@ async def leave_household(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=400, detail="Not in a household")
 
     household = await db.households.find_one({"id": user["household_id"]}, {"_id": 0})
+    if not household:
+        raise HTTPException(status_code=404, detail="Household not found")
     if household["owner_id"] == user["id"]:
         raise HTTPException(status_code=400, detail="Owner cannot leave. Transfer ownership first.")
 
@@ -73,3 +76,71 @@ async def leave_household(user: dict = Depends(get_current_user)):
     await db.households.update_one({"id": user["household_id"]}, {"$pull": {"member_ids": user["id"]}})
 
     return {"message": "Left household"}
+
+@router.post("/join-code")
+async def generate_join_code(user: dict = Depends(get_current_user)):
+    """Generate a join code for the household"""
+    if not user.get("household_id"):
+        raise HTTPException(status_code=400, detail="Not in a household")
+
+    household = await db.households.find_one({"id": user["household_id"]}, {"_id": 0})
+    if not household:
+        raise HTTPException(status_code=404, detail="Household not found")
+
+    # Only owner can generate join codes
+    if household["owner_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Only household owner can generate join codes")
+
+    # Generate 8-character code
+    join_code = secrets.token_urlsafe(6).upper()[:8]
+    expires = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+
+    await db.households.update_one(
+        {"id": user["household_id"]},
+        {"$set": {"join_code": join_code, "join_code_expires": expires}}
+    )
+
+    return {"join_code": join_code, "expires": expires}
+
+@router.delete("/join-code")
+async def revoke_join_code(user: dict = Depends(get_current_user)):
+    """Revoke the current join code"""
+    if not user.get("household_id"):
+        raise HTTPException(status_code=400, detail="Not in a household")
+
+    household = await db.households.find_one({"id": user["household_id"]}, {"_id": 0})
+    if not household:
+        raise HTTPException(status_code=404, detail="Household not found")
+
+    if household["owner_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Only household owner can revoke join codes")
+
+    await db.households.update_one(
+        {"id": user["household_id"]},
+        {"$unset": {"join_code": "", "join_code_expires": ""}}
+    )
+
+    return {"message": "Join code revoked"}
+
+@router.post("/join")
+async def join_with_code(data: JoinHouseholdRequest, user: dict = Depends(get_current_user)):
+    """Join a household using a join code"""
+    if user.get("household_id"):
+        raise HTTPException(status_code=400, detail="Already in a household")
+
+    # Find household with this join code
+    household = await db.households.find_one({"join_code": data.join_code.upper()}, {"_id": 0})
+    if not household:
+        raise HTTPException(status_code=404, detail="Invalid join code")
+
+    # Check if code is expired
+    if household.get("join_code_expires"):
+        expires = datetime.fromisoformat(household["join_code_expires"].replace('Z', '+00:00'))
+        if datetime.now(timezone.utc) > expires:
+            raise HTTPException(status_code=400, detail="Join code has expired")
+
+    # Add user to household
+    await db.users.update_one({"id": user["id"]}, {"$set": {"household_id": household["id"]}})
+    await db.households.update_one({"id": household["id"]}, {"$push": {"member_ids": user["id"]}})
+
+    return {"message": f"Joined household: {household['name']}", "household_id": household["id"]}

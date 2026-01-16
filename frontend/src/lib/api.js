@@ -18,18 +18,33 @@ const getServerUrl = () => {
   return process.env.REACT_APP_BACKEND_URL || '';
 };
 
+// Check if server is configured
+const isServerConfigured = () => {
+  const url = getServerUrl();
+  return url && url.length > 0;
+};
+
 const api = axios.create({
   baseURL: getServerUrl() + '/api',
 });
 
 // Update baseURL when it might have changed
 api.interceptors.request.use((config) => {
+  // Check if server is configured
+  if (!isServerConfigured()) {
+    // Redirect to server config page
+    if (window.location.pathname !== '/server') {
+      window.location.href = '/server';
+    }
+    return Promise.reject(new Error('Server not configured. Please configure your server URL.'));
+  }
+
   // Dynamically update baseURL in case it changed
   const currentUrl = getServerUrl();
   if (currentUrl) {
     config.baseURL = currentUrl + '/api';
   }
-  
+
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -55,6 +70,8 @@ export const authApi = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/me', data),
+  deleteAccount: () => api.delete('/auth/me'),
 };
 
 // Households
@@ -64,6 +81,9 @@ export const householdApi = {
   getMembers: () => api.get('/households/members'),
   invite: (email) => api.post('/households/invite', { email }),
   leave: () => api.post('/households/leave'),
+  generateJoinCode: () => api.post('/households/join-code'),
+  revokeJoinCode: () => api.delete('/households/join-code'),
+  joinWithCode: (code) => api.post('/households/join', { join_code: code }),
 };
 
 // Recipes
@@ -151,6 +171,22 @@ export const llmApi = {
   getSettings: () => api.get('/settings/llm'),
   updateSettings: (settings) => api.put('/settings/llm', settings),
   testConnection: (settings) => api.post('/settings/llm/test', settings),
+};
+
+// Custom AI Prompts
+export const promptsApi = {
+  get: () => api.get('/prompts'),
+  update: (prompts) => api.put('/prompts', prompts),
+  reset: () => api.delete('/prompts'),
+};
+
+// Cooking (Tonight suggestions, Cook Mode, Feedback)
+export const cookingApi = {
+  getTonightSuggestions: () => api.get('/cooking/tonight'),
+  startSession: (recipeId) => api.post('/cooking/session', { recipe_id: recipeId }),
+  completeSession: (sessionId, feedback) => api.post(`/cooking/session/${sessionId}/complete`, { feedback }),
+  submitFeedback: (recipeId, feedback) => api.post('/cooking/feedback', { recipe_id: recipeId, feedback }),
+  getStats: () => api.get('/cooking/stats'),
 };
 
 // Server Config
