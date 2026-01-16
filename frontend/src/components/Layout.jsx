@@ -177,24 +177,6 @@ export const Layout = ({ children }) => {
                       </div>
                     </DropdownMenuItem>
 
-                    {/* New Recipe */}
-                    <DropdownMenuItem onClick={() => navigate('/recipes/new')} className="py-2.5 px-4 cursor-pointer">
-                      <Plus className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">New recipe</p>
-                        <p className="text-xs text-muted-foreground">Write your own recipe</p>
-                      </div>
-                    </DropdownMenuItem>
-
-                    {/* Import from URL */}
-                    <DropdownMenuItem onClick={() => navigate('/recipes/import')} className="py-2.5 px-4 cursor-pointer">
-                      <LinkIcon className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">Import from URL</p>
-                        <p className="text-xs text-muted-foreground">Paste a recipe link</p>
-                      </div>
-                    </DropdownMenuItem>
-
                     {/* Theme Toggle */}
                     <DropdownMenuItem onClick={toggleDarkMode} className="py-2.5 px-4 cursor-pointer">
                       {darkMode ? (
