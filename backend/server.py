@@ -42,6 +42,16 @@ async def lifespan(app: FastAPI):
     client.close()
 
 app = FastAPI(lifespan=lifespan, title="Mise API")
+
+# CORS - must be added before routes
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=settings.cors_origins.split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 api_router = APIRouter(prefix="/api")
 
 # Include routers
@@ -133,12 +143,3 @@ async def get_upload(filename: str):
     return FileResponse(file_path)
 
 app.include_router(api_router)
-
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=settings.cors_origins.split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
