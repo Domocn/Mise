@@ -168,7 +168,7 @@ export const ShoppingLists = () => {
           
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button className="rounded-full bg-sage hover:bg-sage-dark" data-testid="create-list-btn">
+              <Button className="rounded-full bg-mise hover:bg-mise-dark" data-testid="create-list-btn">
                 <Plus className="w-4 h-4 mr-2" />
                 New List
               </Button>
@@ -187,7 +187,7 @@ export const ShoppingLists = () => {
                 />
                 <Button 
                   onClick={handleCreateList}
-                  className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                  className="w-full rounded-full bg-mise hover:bg-mise-dark"
                   disabled={creating || !newListName.trim()}
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -200,7 +200,7 @@ export const ShoppingLists = () => {
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-sage" />
+            <Loader2 className="w-8 h-8 animate-spin text-mise" />
           </div>
         ) : lists.length === 0 ? (
           <motion.div
@@ -215,7 +215,7 @@ export const ShoppingLists = () => {
             </p>
             <Button 
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-full bg-sage hover:bg-sage-dark"
+              className="rounded-full bg-mise hover:bg-mise-dark"
             >
               <Plus className="w-4 h-4 mr-2" />
               Create Your First List
@@ -234,15 +234,15 @@ export const ShoppingLists = () => {
                   key={list.id}
                   className={`group p-4 rounded-xl cursor-pointer transition-all ${
                     selectedList?.id === list.id
-                      ? 'bg-sage text-white'
-                      : 'bg-white border border-border/60 hover:border-sage'
+                      ? 'bg-mise text-white'
+                      : 'bg-white border border-border/60 hover:border-mise'
                   }`}
                   onClick={() => setSelectedList(list)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{list.name}</p>
-                      <p className={`text-sm ${selectedList?.id === list.id ? 'text-sage-light' : 'text-muted-foreground'}`}>
+                      <p className={`text-sm ${selectedList?.id === list.id ? 'text-mise-light' : 'text-muted-foreground'}`}>
                         {list.items.length} items
                       </p>
                     </div>
@@ -250,7 +250,7 @@ export const ShoppingLists = () => {
                       variant="ghost"
                       size="icon"
                       className={`h-8 w-8 opacity-0 group-hover:opacity-100 ${
-                        selectedList?.id === list.id ? 'text-white hover:text-white hover:bg-sage-dark' : ''
+                        selectedList?.id === list.id ? 'text-white hover:text-white hover:bg-mise-dark' : ''
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -281,7 +281,7 @@ export const ShoppingLists = () => {
                   {totalCount > 0 && (
                     <div className="w-20 h-2 bg-cream-subtle rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-sage rounded-full transition-all"
+                        className="h-full bg-mise rounded-full transition-all"
                         style={{ width: `${(checkedCount / totalCount) * 100}%` }}
                       />
                     </div>
@@ -307,7 +307,7 @@ export const ShoppingLists = () => {
                   />
                   <Button 
                     onClick={handleAddItem}
-                    className="rounded-xl bg-sage hover:bg-sage-dark"
+                    className="rounded-xl bg-mise hover:bg-mise-dark"
                     disabled={!newItemName.trim()}
                     data-testid="add-item-btn"
                   >
@@ -326,13 +326,13 @@ export const ShoppingLists = () => {
                       <div 
                         key={idx}
                         className={`group flex items-center gap-3 p-3 rounded-xl transition-colors ${
-                          item.checked ? 'bg-sage-light/50' : 'bg-cream-subtle hover:bg-cream'
+                          item.checked ? 'bg-mise-light/50' : 'bg-cream-subtle hover:bg-cream'
                         }`}
                       >
                         <Checkbox
                           checked={item.checked}
                           onCheckedChange={() => handleToggleItem(idx)}
-                          className="data-[state=checked]:bg-sage data-[state=checked]:border-sage"
+                          className="data-[state=checked]:bg-mise data-[state=checked]:border-mise"
                         />
                         <span className={`flex-1 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
                           <span className="font-medium">{item.amount}</span>

@@ -151,8 +151,8 @@ export const QuickAddRecipe = () => {
           className="bg-white rounded-2xl border border-border/60 p-6 shadow-card"
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-sage-light flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-sage" />
+            <div className="w-12 h-12 rounded-xl bg-mise-light flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-mise" />
             </div>
             <div>
               <h1 className="font-heading text-2xl font-bold">Quick Add Recipe</h1>
@@ -203,7 +203,7 @@ export const QuickAddRecipe = () => {
                 <Button
                   onClick={handlePasteSubmit}
                   disabled={pasteLoading || !pasteText.trim()}
-                  className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+                  className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
                   data-testid="parse-recipe-btn"
                 >
                   {pasteLoading ? (
@@ -232,7 +232,7 @@ export const QuickAddRecipe = () => {
                 <Button
                   onClick={handleUrlSubmit}
                   disabled={urlLoading || !url.trim()}
-                  className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+                  className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
                   data-testid="extract-url-btn"
                 >
                   {urlLoading ? (
@@ -261,8 +261,8 @@ export const QuickAddRecipe = () => {
                         onClick={() => setImportPlatform(platform.id)}
                         className={`p-3 rounded-xl border text-sm font-medium transition-all ${
                           importPlatform === platform.id
-                            ? 'border-sage bg-sage-light text-sage'
-                            : 'border-border/60 hover:border-sage'
+                            ? 'border-mise bg-mise-light text-mise'
+                            : 'border-border/60 hover:border-mise'
                         }`}
                       >
                         {platform.label}
@@ -283,7 +283,7 @@ export const QuickAddRecipe = () => {
                 <Button
                   onClick={handleImportSubmit}
                   disabled={importLoading || !importData.trim()}
-                  className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+                  className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
                   data-testid="import-btn"
                 >
                   {importLoading ? (
@@ -309,7 +309,7 @@ export const QuickAddRecipe = () => {
             >
               <div className="flex items-center justify-between">
                 <h2 className="font-heading text-lg font-semibold">Recipe Preview</h2>
-                <div className="flex items-center gap-2 text-sm text-sage">
+                <div className="flex items-center gap-2 text-sm text-mise">
                   <Check className="w-4 h-4" />
                   Ready to save
                 </div>
@@ -358,7 +358,7 @@ export const QuickAddRecipe = () => {
                       </span>
                     ))}
                     {extractedRecipe.ingredients?.length > 6 && (
-                      <span className="px-2 py-1 bg-sage-light text-sage rounded-lg text-xs">
+                      <span className="px-2 py-1 bg-mise-light text-mise rounded-lg text-xs">
                         +{extractedRecipe.ingredients.length - 6} more
                       </span>
                     )}
@@ -376,7 +376,7 @@ export const QuickAddRecipe = () => {
                 <Button
                   onClick={handleSaveRecipe}
                   disabled={saving}
-                  className="flex-1 rounded-full bg-sage hover:bg-sage-dark h-12"
+                  className="flex-1 rounded-full bg-mise hover:bg-mise-dark h-12"
                   data-testid="save-recipe-btn"
                 >
                   {saving ? (

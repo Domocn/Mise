@@ -40,7 +40,7 @@ export const Login = () => {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-mise flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
           <span className="font-heading font-bold text-2xl">Mise</span>
@@ -64,7 +64,7 @@ export const Login = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="login-email"
                 />
@@ -81,7 +81,7 @@ export const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="login-password"
                 />
@@ -90,7 +90,7 @@ export const Login = () => {
 
             <Button 
               type="submit" 
-              className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+              className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
               disabled={loading}
               data-testid="login-submit"
             >
@@ -107,7 +107,7 @@ export const Login = () => {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-sage hover:underline font-medium">
+            <Link to="/register" className="text-mise hover:underline font-medium">
               Sign up
             </Link>
           </p>
@@ -150,7 +150,7 @@ export const Register = () => {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-mise flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
           <span className="font-heading font-bold text-2xl">Mise</span>
@@ -174,7 +174,7 @@ export const Register = () => {
                   placeholder="Your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="register-name"
                 />
@@ -191,7 +191,7 @@ export const Register = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="register-email"
                 />
@@ -208,7 +208,7 @@ export const Register = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   minLength={6}
                   data-testid="register-password"
@@ -218,7 +218,7 @@ export const Register = () => {
 
             <Button 
               type="submit" 
-              className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+              className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
               disabled={loading}
               data-testid="register-submit"
             >
@@ -235,7 +235,7 @@ export const Register = () => {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-sage hover:underline font-medium">
+            <Link to="/login" className="text-mise hover:underline font-medium">
               Sign in
             </Link>
           </p>

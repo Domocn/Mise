@@ -253,7 +253,7 @@ export const MealPlanner = () => {
         {/* Calendar Grid */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-sage" />
+            <Loader2 className="w-8 h-8 animate-spin text-mise" />
           </div>
         ) : (
           <motion.div
@@ -270,7 +270,7 @@ export const MealPlanner = () => {
                 <div 
                   key={day.toISOString()}
                   className={`bg-white rounded-2xl border p-4 min-h-[200px] ${
-                    isToday ? 'border-sage border-2' : 'border-border/60'
+                    isToday ? 'border-mise border-2' : 'border-border/60'
                   }`}
                 >
                   {/* Day Header */}
@@ -279,7 +279,7 @@ export const MealPlanner = () => {
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">
                         {format(day, 'EEE')}
                       </p>
-                      <p className={`font-heading font-bold text-lg ${isToday ? 'text-sage' : ''}`}>
+                      <p className={`font-heading font-bold text-lg ${isToday ? 'text-mise' : ''}`}>
                         {format(day, 'd')}
                       </p>
                     </div>
@@ -302,11 +302,11 @@ export const MealPlanner = () => {
                       meals.map((meal) => (
                         <div 
                           key={meal.id}
-                          className="group p-2 rounded-lg bg-cream-subtle hover:bg-sage-light transition-colors"
+                          className="group p-2 rounded-lg bg-cream-subtle hover:bg-mise-light transition-colors"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs text-sage font-medium">{meal.meal_type}</p>
+                              <p className="text-xs text-mise font-medium">{meal.meal_type}</p>
                               <p className="text-sm font-medium truncate">{meal.recipe_title}</p>
                             </div>
                             <Button
@@ -380,7 +380,7 @@ export const MealPlanner = () => {
 
               <Button 
                 onClick={handleAddMeal} 
-                className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                className="w-full rounded-full bg-mise hover:bg-mise-dark"
                 disabled={adding || !selectedRecipe}
               >
                 {adding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -395,7 +395,7 @@ export const MealPlanner = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-sage" />
+                <Sparkles className="w-5 h-5 text-mise" />
                 Auto-Generate Meal Plan
               </DialogTitle>
             </DialogHeader>
@@ -420,7 +420,7 @@ export const MealPlanner = () => {
 
               <Button 
                 onClick={handleAutoGenerate} 
-                className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                className="w-full rounded-full bg-mise hover:bg-mise-dark"
                 disabled={autoGenerating || recipes.length < 3}
               >
                 {autoGenerating ? (

@@ -82,7 +82,7 @@ export const EmptyState = ({
       {displayActionLabel && onAction && (
         <Button 
           onClick={onAction}
-          className="rounded-full bg-sage hover:bg-sage-dark"
+          className="rounded-full bg-mise hover:bg-mise-dark"
         >
           <Plus className="w-4 h-4 mr-2" />
           {displayActionLabel}

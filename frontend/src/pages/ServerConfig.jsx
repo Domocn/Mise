@@ -146,7 +146,7 @@ export const ServerConfig = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-mise flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
           <span className="font-heading font-bold text-2xl">Mise</span>
@@ -155,8 +155,8 @@ export const ServerConfig = () => {
         {/* Config Card */}
         <div className="bg-white rounded-2xl shadow-card border border-border/60 p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-sage-light flex items-center justify-center">
-              <Server className="w-5 h-5 text-sage" />
+            <div className="w-10 h-10 rounded-xl bg-mise-light flex items-center justify-center">
+              <Server className="w-5 h-5 text-mise" />
             </div>
             <div>
               <h1 className="font-heading text-xl font-bold">Connect to Server</h1>
@@ -176,11 +176,11 @@ export const ServerConfig = () => {
                     onClick={() => handlePresetClick(preset)}
                     className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                       serverUrl === preset.url || serverUrl.startsWith(preset.url)
-                        ? 'border-sage bg-sage-light'
-                        : 'border-border/60 hover:border-sage hover:bg-cream-subtle'
+                        ? 'border-mise bg-mise-light'
+                        : 'border-border/60 hover:border-mise hover:bg-cream-subtle'
                     }`}
                   >
-                    <Icon className="w-5 h-5 text-sage" />
+                    <Icon className="w-5 h-5 text-mise" />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{preset.label}</p>
                       <p className="text-xs text-muted-foreground">{preset.description}</p>
@@ -225,15 +225,15 @@ export const ServerConfig = () => {
               animate={{ opacity: 1, y: 0 }}
               className={`p-4 rounded-xl mb-6 ${
                 serverStatus === 'success' 
-                  ? 'bg-sage-light border border-sage/20' 
+                  ? 'bg-mise-light border border-mise/20' 
                   : 'bg-red-50 border border-red-200'
               }`}
             >
               <div className="flex items-center gap-2">
                 {serverStatus === 'success' ? (
                   <>
-                    <Check className="w-5 h-5 text-sage" />
-                    <span className="font-medium text-sage">Connected!</span>
+                    <Check className="w-5 h-5 text-mise" />
+                    <span className="font-medium text-mise">Connected!</span>
                   </>
                 ) : (
                   <>
@@ -264,7 +264,7 @@ export const ServerConfig = () => {
             <Button
               onClick={handleSave}
               disabled={serverStatus !== 'success'}
-              className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+              className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
               data-testid="save-server-btn"
             >
               Connect & Continue

@@ -34,7 +34,7 @@ export const RecipeCard = ({ recipe }) => {
 
         {/* Content */}
         <div className="p-5">
-          <h3 className="font-heading font-semibold text-lg text-foreground line-clamp-1 group-hover:text-sage transition-colors">
+          <h3 className="font-heading font-semibold text-lg text-foreground line-clamp-1 group-hover:text-mise transition-colors">
             {recipe.title}
           </h3>
           
@@ -66,7 +66,7 @@ export const RecipeCard = ({ recipe }) => {
               {recipe.tags.slice(0, 3).map((tag, idx) => (
                 <span 
                   key={idx}
-                  className="px-2 py-0.5 text-xs rounded-full bg-sage-light text-sage"
+                  className="px-2 py-0.5 text-xs rounded-full bg-mise-light text-mise"
                 >
                   {tag}
                 </span>

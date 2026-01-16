@@ -51,7 +51,7 @@ export const Layout = ({ children }) => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2 group" data-testid="logo-link">
-              <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 rounded-xl bg-mise flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
                 <ChefHat className="w-6 h-6 text-white" />
               </div>
               <span className="font-heading font-bold text-xl text-foreground hidden sm:block">
@@ -71,8 +71,8 @@ export const Layout = ({ children }) => {
                     data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-sage text-white shadow-sm'
-                        : 'text-foreground/70 hover:text-foreground hover:bg-sage-light'
+                        ? 'bg-mise text-white shadow-sm'
+                        : 'text-foreground/70 hover:text-foreground hover:bg-mise-light'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -89,7 +89,7 @@ export const Layout = ({ children }) => {
                 <DropdownMenuTrigger asChild>
                   <Button 
                     size="sm" 
-                    className="rounded-full bg-sage hover:bg-sage-dark shadow-sm"
+                    className="rounded-full bg-mise hover:bg-mise-dark shadow-sm"
                     data-testid="add-recipe-trigger"
                   >
                     <Plus className="w-4 h-4 mr-1" />
@@ -118,10 +118,10 @@ export const Layout = ({ children }) => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="rounded-full w-10 h-10 bg-sage-light"
+                    className="rounded-full w-10 h-10 bg-mise-light"
                     data-testid="user-menu-trigger"
                   >
-                    <User className="w-5 h-5 text-sage" />
+                    <User className="w-5 h-5 text-mise" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -129,7 +129,7 @@ export const Layout = ({ children }) => {
                     <p className="font-medium text-sm">{user?.name}</p>
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                     {household && (
-                      <p className="text-xs text-sage mt-1">{household.name}</p>
+                      <p className="text-xs text-mise mt-1">{household.name}</p>
                     )}
                   </div>
                   <DropdownMenuSeparator />
@@ -163,7 +163,7 @@ export const Layout = ({ children }) => {
                   key={item.path}
                   to={item.path}
                   className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
-                    isActive ? 'text-sage' : 'text-muted-foreground'
+                    isActive ? 'text-mise' : 'text-muted-foreground'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

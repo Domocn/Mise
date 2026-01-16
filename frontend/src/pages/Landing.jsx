@@ -89,7 +89,7 @@ export const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-mise flex items-center justify-center shadow-sm">
                 <ChefHat className="w-6 h-6 text-white" />
               </div>
               <span className="font-heading font-bold text-xl">Mise</span>
@@ -101,7 +101,7 @@ export const Landing = () => {
                 </Button>
               </Link>
               <Link to="/register">
-                <Button className="rounded-full bg-sage hover:bg-sage-dark shadow-sm" data-testid="register-btn">
+                <Button className="rounded-full bg-mise hover:bg-mise-dark shadow-sm" data-testid="register-btn">
                   Get Started
                 </Button>
               </Link>
@@ -124,7 +124,7 @@ export const Landing = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sage-light text-sage text-sm font-medium mb-6">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-mise-light text-mise text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
                 Self-Hostable Recipe App
               </span>
@@ -132,7 +132,7 @@ export const Landing = () => {
               <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                 Your Family's
                 <br />
-                <span className="text-sage">Recipe Haven</span>
+                <span className="text-mise">Recipe Haven</span>
               </h1>
               
               <p className="mt-6 text-lg text-muted-foreground max-w-lg leading-relaxed">
@@ -145,7 +145,7 @@ export const Landing = () => {
                 <Link to="/register">
                   <Button 
                     size="lg" 
-                    className="rounded-full bg-sage hover:bg-sage-dark shadow-md hover:shadow-lg transition-all px-8"
+                    className="rounded-full bg-mise hover:bg-mise-dark shadow-md hover:shadow-lg transition-all px-8"
                     data-testid="hero-get-started"
                   >
                     Start Cooking
@@ -156,7 +156,7 @@ export const Landing = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="rounded-full border-sage text-sage hover:bg-sage-light"
+                    className="rounded-full border-mise text-mise hover:bg-mise-light"
                   >
                     Sign In
                   </Button>
@@ -214,8 +214,8 @@ export const Landing = () => {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-terracotta-light flex items-center justify-center">
-                    <Refrigerator className="w-6 h-6 text-terracotta" />
+                  <div className="w-12 h-12 rounded-lg bg-coral-light flex items-center justify-center">
+                    <Refrigerator className="w-6 h-6 text-coral" />
                   </div>
                   <div>
                     <p className="font-medium text-sm">What's in my fridge?</p>
@@ -254,8 +254,8 @@ export const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-sage-light flex items-center justify-center mb-4 group-hover:bg-sage group-hover:text-white transition-colors">
-                    <Icon className="w-6 h-6 text-sage group-hover:text-white transition-colors" />
+                  <div className="w-12 h-12 rounded-xl bg-mise-light flex items-center justify-center mb-4 group-hover:bg-mise group-hover:text-white transition-colors">
+                    <Icon className="w-6 h-6 text-mise group-hover:text-white transition-colors" />
                   </div>
                   <h3 className="font-heading font-semibold text-lg mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
@@ -273,7 +273,7 @@ export const Landing = () => {
             className="text-center mb-16"
             {...fadeInUp}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sage-light text-sage text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-mise-light text-mise text-sm font-medium mb-4">
               <Server className="w-4 h-4" />
               Self-Hosted
             </span>
@@ -296,8 +296,8 @@ export const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-sage-light flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-7 h-7 text-sage" />
+                  <div className="w-14 h-14 rounded-2xl bg-mise-light flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-7 h-7 text-mise" />
                   </div>
                   <h3 className="font-heading font-semibold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm">{feature.description}</p>
@@ -329,20 +329,20 @@ export const Landing = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-sage">
+      <section className="py-20 bg-mise">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div {...fadeInUp}>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-6">
               Ready to Organize Your Recipes?
             </h2>
-            <p className="text-sage-light text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-mise-light text-lg mb-8 max-w-2xl mx-auto">
               Deploy in minutes with Docker. No account required, no data collected.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/register">
                 <Button 
                   size="lg" 
-                  className="rounded-full bg-white text-sage hover:bg-cream shadow-md px-8"
+                  className="rounded-full bg-white text-mise hover:bg-cream shadow-md px-8"
                   data-testid="cta-get-started"
                 >
                   Get Started Free
@@ -373,7 +373,7 @@ export const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-sage flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-mise flex items-center justify-center">
                 <ChefHat className="w-4 h-4 text-white" />
               </div>
               <span className="font-heading font-semibold">Mise</span>
@@ -383,7 +383,7 @@ export const Landing = () => {
                 href="https://github.com/Domocn/Mise"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-sage transition-colors"
+                className="text-muted-foreground hover:text-mise transition-colors"
               >
                 <Github className="w-5 h-5" />
               </a>
