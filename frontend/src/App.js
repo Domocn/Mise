@@ -63,31 +63,26 @@ import { ImportFromPlatform } from './pages/ImportFromPlatform';
 
 import './App.css';
 
-// Debug component to show auth state
+// Debug component to show auth state - ALWAYS visible for debugging
 const AuthDebug = () => {
   const { isAuthenticated, loading, user } = useAuth();
-
-  // Only show in development or if there's an issue
-  if (process.env.NODE_ENV === 'production' && !loading && isAuthenticated) {
-    return null;
-  }
 
   return (
     <div style={{
       position: 'fixed',
-      bottom: '10px',
-      left: '10px',
-      background: '#333',
-      color: '#fff',
-      padding: '10px',
-      borderRadius: '8px',
-      fontSize: '12px',
-      zIndex: 9999,
-      fontFamily: 'monospace'
+      top: '0',
+      left: '0',
+      right: '0',
+      background: 'red',
+      color: 'white',
+      padding: '20px',
+      fontSize: '18px',
+      zIndex: 2147483647,
+      fontFamily: 'monospace',
+      fontWeight: 'bold',
+      textAlign: 'center'
     }}>
-      <div>Loading: {loading ? 'true' : 'false'}</div>
-      <div>Auth: {isAuthenticated ? 'true' : 'false'}</div>
-      <div>User: {user ? user.email : 'null'}</div>
+      DEBUG: Loading={loading ? 'TRUE' : 'FALSE'} | Auth={isAuthenticated ? 'TRUE' : 'FALSE'} | User={user ? user.email : 'NULL'}
     </div>
   );
 };
