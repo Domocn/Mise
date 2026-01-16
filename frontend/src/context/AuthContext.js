@@ -27,11 +27,15 @@ export const AuthProvider = ({ children }) => {
           const res = await authApi.me();
           setUser(res.data);
           localStorage.setItem('user', JSON.stringify(res.data));
-          
-          // Fetch household
+
+          // Fetch household (separate try-catch to not log user out if this fails)
           if (res.data.household_id) {
-            const hRes = await householdApi.getMy();
-            setHousehold(hRes.data);
+            try {
+              const hRes = await householdApi.getMy();
+              setHousehold(hRes.data);
+            } catch (hError) {
+              console.error('Failed to fetch household:', hError);
+            }
           }
         } catch (error) {
           console.error('Auth init error:', error);
