@@ -11,7 +11,7 @@ from dependencies import db, client
 from routers import (
     auth, households, recipes, ai, meal_plans, shopping_lists,
     homeassistant, notifications, calendar, import_data, llm_settings,
-    favorites, prompts
+    favorites, prompts, cooking
 )
 
 # Setup Logging
@@ -68,6 +68,7 @@ api_router.include_router(import_data.router)
 api_router.include_router(llm_settings.router)
 api_router.include_router(favorites.router)
 api_router.include_router(prompts.router)
+api_router.include_router(cooking.router)
 
 # Categories endpoint (simple enough to keep here or move to recipes)
 @api_router.get("/categories")

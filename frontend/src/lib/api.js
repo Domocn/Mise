@@ -180,6 +180,15 @@ export const promptsApi = {
   reset: () => api.delete('/prompts'),
 };
 
+// Cooking (Tonight suggestions, Cook Mode, Feedback)
+export const cookingApi = {
+  getTonightSuggestions: () => api.get('/cooking/tonight'),
+  startSession: (recipeId) => api.post('/cooking/session', { recipe_id: recipeId }),
+  completeSession: (sessionId, feedback) => api.post(`/cooking/session/${sessionId}/complete`, { feedback }),
+  submitFeedback: (recipeId, feedback) => api.post('/cooking/feedback', { recipe_id: recipeId, feedback }),
+  getStats: () => api.get('/cooking/stats'),
+};
+
 // Server Config
 export const configApi = {
   getConfig: () => api.get('/config'),

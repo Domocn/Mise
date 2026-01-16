@@ -151,3 +151,15 @@ class CustomPromptsUpdate(BaseModel):
     recipe_extraction: Optional[str] = None  # Custom prompt for recipe extraction
     meal_planning: Optional[str] = None  # Custom prompt for meal planning
     fridge_search: Optional[str] = None  # Custom prompt for fridge/ingredient search
+
+# Recipe Feedback (Would cook again?)
+class RecipeFeedback(BaseModel):
+    recipe_id: str
+    feedback: str  # 'yes', 'no', 'meh'
+
+class CookSessionCreate(BaseModel):
+    recipe_id: str
+    started_at: Optional[str] = None
+
+class CookSessionComplete(BaseModel):
+    feedback: str  # 'yes', 'no', 'meh'
