@@ -18,6 +18,7 @@ import {
   Settings as SettingsIcon,
   Server,
   User,
+  Users,
   LogOut,
   Cpu,
   Globe,
@@ -47,7 +48,7 @@ import { Switch } from '../components/ui/switch';
 
 export const Settings = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, household, logout } = useAuth();
   const [serverInfo, setServerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   
@@ -1099,6 +1100,46 @@ export const Settings = () => {
           </div>
         </motion.section>
 
+        {/* Household Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22 }}
+          className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+        >
+          <div className="p-4 border-b border-border/60 bg-cream-subtle">
+            <h2 className="font-heading font-semibold flex items-center gap-2">
+              <Users className="w-5 h-5 text-sage" />
+              Household
+            </h2>
+          </div>
+
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-sage" />
+                <div>
+                  <p className="font-medium text-sm">
+                    {household ? household.name : 'No Household'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {household ? 'Share recipes with family' : 'Create or join a household'}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/household')}
+                className="rounded-full"
+              >
+                {household ? 'Manage' : 'Create'}
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        </motion.section>
+
         {/* Feedback & Support Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -1112,9 +1153,9 @@ export const Settings = () => {
               Feedback & Support
             </h2>
           </div>
-          
+
           <div className="divide-y divide-border/60">
-            <a 
+            <a
               href="https://github.com/Domocn/Recipe-App/issues/new?template=bug_report.md&labels=bug"
               target="_blank"
               rel="noopener noreferrer"
