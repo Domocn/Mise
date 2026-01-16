@@ -233,7 +233,7 @@ export const Layout = ({ children }) => {
                   key={item.path}
                   to={item.path}
                   className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
-                    isActive ? 'text-mise' : 'text-muted-foreground'
+                    isActive ? item.activeColor : 'text-muted-foreground'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
