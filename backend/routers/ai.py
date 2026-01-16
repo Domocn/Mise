@@ -165,10 +165,29 @@ async def fridge_search(
 
     all_recipes = await db.recipes.find(query, {"_id": 0}).to_list(500)
 
-    # Use AI to find matching recipes
-    system_prompt = """You are a recipe matching assistant. Given a list of available ingredients and a list of recipes, identify which recipes can be made with the available ingredients (allowing for minor missing seasonings/staples).
+    # If no recipes and user wants AI suggestions, just ask for a new recipe
+    if len(all_recipes) == 0 and data.search_online:
+        system_prompt = """You are a helpful cooking assistant. Given a list of ingredients, suggest ONE simple recipe.
+Return ONLY valid JSON in this format (no markdown, no explanation):
+{
+  "matching_recipe_ids": [],
+  "suggestions": [],
+  "ai_suggestion": {
+    "title": "Recipe Name",
+    "description": "Brief description",
+    "ingredients": [{"name": "ingredient", "amount": "1", "unit": "cup"}],
+    "instructions": ["Step 1", "Step 2"],
+    "prep_time": 10,
+    "cook_time": 20,
+    "servings": 4
+  }
+}"""
+        user_prompt = f"I have these ingredients: {ingredients_str}. Suggest a simple recipe I can make."
+    else:
+        # Use AI to find matching recipes
+        system_prompt = """You are a recipe matching assistant. Given a list of available ingredients and a list of recipes, identify which recipes can be made with the available ingredients (allowing for minor missing seasonings/staples).
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON in this format (no markdown, no explanation):
 {
   "matching_recipe_ids": ["id1", "id2"],
   "suggestions": [
@@ -178,27 +197,50 @@ Return ONLY valid JSON in this format:
       "match_percentage": 90
     }
   ],
-  "ai_suggestion": "If user wants a new recipe, provide ONE simple recipe suggestion as a complete recipe object or null"
-}"""
+  "ai_suggestion": null
+}
+If search_online is true and you want to suggest a NEW recipe, set ai_suggestion to a recipe object instead of null."""
 
-    recipes_info = [{"id": r["id"], "title": r["title"], "ingredients": r["ingredients"]} for r in all_recipes]
+        recipes_info = [{"id": r["id"], "title": r["title"], "ingredients": [i.get("name", i) if isinstance(i, dict) else i for i in r.get("ingredients", [])]} for r in all_recipes]
 
-    user_prompt = f"""Available ingredients: {ingredients_str}
+        user_prompt = f"""Available ingredients: {ingredients_str}
 
 Existing recipes:
-{recipes_info}
+{json.dumps(recipes_info, indent=2) if recipes_info else "No existing recipes yet."}
 
-Find matching recipes and if search_online is {data.search_online}, suggest a new simple recipe that uses these ingredients."""
-
-    result = await call_llm(request.app.state.http_client, system_prompt, user_prompt, user["id"])
-
-    result = clean_llm_json(result)
+Find matching recipes{" and suggest a new simple recipe" if data.search_online else ""}."""
 
     try:
+        result = await call_llm(request.app.state.http_client, system_prompt, user_prompt, user["id"])
+        logger.info(f"LLM response length: {len(result) if result else 0}")
+
+        if not result or len(result.strip()) == 0:
+            logger.warning("LLM returned empty response")
+            return {
+                "matching_recipes": [],
+                "suggestions": [],
+                "ai_recipe_suggestion": None,
+                "error": "AI returned empty response. Try again or use a different AI provider."
+            }
+
+        result = clean_llm_json(result)
         ai_result = json.loads(result)
-    except (json.JSONDecodeError, TypeError) as e:
-        logger.warning(f"Failed to parse AI fridge-search response: {e}")
-        ai_result = {"matching_recipe_ids": [], "suggestions": [], "ai_suggestion": None}
+    except json.JSONDecodeError as e:
+        logger.warning(f"Failed to parse AI fridge-search response: {e}, raw: {result[:500] if result else 'empty'}")
+        return {
+            "matching_recipes": [],
+            "suggestions": [],
+            "ai_recipe_suggestion": None,
+            "error": f"AI response was not valid JSON. The embedded AI may have crashed. Try using Ollama or a cloud API instead."
+        }
+    except Exception as e:
+        logger.error(f"AI fridge-search error: {e}")
+        return {
+            "matching_recipes": [],
+            "suggestions": [],
+            "ai_recipe_suggestion": None,
+            "error": str(e)
+        }
 
     # Get full recipe data for matches
     matching_recipes = [r for r in all_recipes if r["id"] in ai_result.get("matching_recipe_ids", [])]
