@@ -350,7 +350,7 @@ export const Landing = () => {
                 </Button>
               </Link>
               <a 
-                href="https://github.com/Domocn/Recipe-App" 
+                href="https://github.com/Domocn/Mise" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
@@ -380,7 +380,7 @@ export const Landing = () => {
             </div>
             <div className="flex items-center gap-6">
               <a 
-                href="https://github.com/Domocn/Recipe-App"
+                href="https://github.com/Domocn/Mise"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-sage transition-colors"
