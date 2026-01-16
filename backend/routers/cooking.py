@@ -27,10 +27,11 @@ async def get_tonight_suggestions(user: dict = Depends(get_current_user)):
         elif fb["feedback"] == "no":
             buried.add(fb["recipe_id"])
 
-    # Build query for user's recipes
-    query = {"$or": [{"author_id": user_id}]}
+    # Build query for user's recipes - get recipes they own OR in their household
     if household_id:
-        query["$or"].append({"household_id": household_id})
+        query = {"$or": [{"author_id": user_id}, {"household_id": household_id}]}
+    else:
+        query = {"author_id": user_id}
 
     # Get all available recipes
     recipes = await db.recipes.find(query, {"_id": 0}).to_list(100)
