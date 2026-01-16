@@ -26,59 +26,9 @@ COPY backend/ ./
 # Copy frontend build to nginx
 COPY --from=frontend-build /app/frontend/build /usr/share/nginx/html
 
-# Nginx config to serve frontend and proxy /api to backend
-RUN cat > /etc/nginx/sites-available/default << 'EOF'
-server {
-    listen 80;
-    server_name _;
-
-    # Serve frontend
-    location / {
-        root /usr/share/nginx/html;
-        index index.html;
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Proxy API requests to backend
-    location /api {
-        proxy_pass http://127.0.0.1:8001;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-EOF
-
-# Supervisor config to run both nginx and backend
-RUN cat > /etc/supervisor/conf.d/mise.conf << 'EOF'
-[supervisord]
-nodaemon=true
-user=root
-
-[program:nginx]
-command=/usr/sbin/nginx -g "daemon off;"
-autostart=true
-autorestart=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-[program:backend]
-command=python -m uvicorn main:app --host 0.0.0.0 --port 8001
-directory=/app/backend
-autostart=true
-autorestart=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-EOF
+# Copy nginx and supervisor configs
+COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+COPY docker/supervisor/mise.conf /etc/supervisor/conf.d/mise.conf
 
 # Create upload directory
 RUN mkdir -p /app/uploads /app/models
