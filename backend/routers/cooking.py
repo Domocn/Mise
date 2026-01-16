@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from models import RecipeFeedback, CookSessionCreate, CookSessionComplete
 from dependencies import db, get_current_user
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from typing import List, Optional
 
 router = APIRouter(prefix="/cooking", tags=["Cooking"])
@@ -12,6 +12,38 @@ async def get_tonight_suggestions(user: dict = Depends(get_current_user)):
     """Get 3 quick recipe suggestions for tonight based on user preferences"""
     user_id = user["id"]
     household_id = user.get("household_id")
+    today = date.today().isoformat()
+
+    # First check if there's already a meal planned for tonight
+    if household_id:
+        planned_meal = await db.meal_plans.find_one({
+            "household_id": household_id,
+            "date": today,
+            "meal_type": {"$in": ["dinner", "Dinner"]}
+        }, {"_id": 0})
+    else:
+        planned_meal = None
+
+    # If dinner is planned, return that recipe with a flag
+    if planned_meal:
+        recipe = await db.recipes.find_one({"id": planned_meal["recipe_id"]}, {"_id": 0})
+        if recipe:
+            total_time = (recipe.get("prep_time", 0) or 0) + (recipe.get("cook_time", 0) or 0)
+            effort = "Low"
+            if total_time > 45 or len(recipe.get("ingredients", [])) > 10:
+                effort = "Medium"
+            if total_time > 75 or len(recipe.get("ingredients", [])) > 15:
+                effort = "High"
+
+            return {
+                "planned": True,
+                "meal_type": planned_meal.get("meal_type", "Dinner"),
+                "recipe": {
+                    **recipe,
+                    "effort": effort,
+                    "total_time": total_time
+                }
+            }
 
     # Get user's feedback history to boost/bury recipes
     feedback_cursor = db.recipe_feedback.find({"user_id": user_id})
@@ -80,7 +112,7 @@ async def get_tonight_suggestions(user: dict = Depends(get_current_user)):
     for s in suggestions:
         del s["_score"]
 
-    return suggestions
+    return {"planned": False, "suggestions": suggestions}
 
 @router.post("/session")
 async def start_cook_session(data: CookSessionCreate, user: dict = Depends(get_current_user)):

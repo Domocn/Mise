@@ -16,6 +16,7 @@ import {
 export const TonightSuggestions = () => {
   const navigate = useNavigate();
   const [suggestions, setSuggestions] = useState([]);
+  const [plannedRecipe, setPlannedRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -26,7 +27,15 @@ export const TonightSuggestions = () => {
   const loadSuggestions = async () => {
     try {
       const res = await cookingApi.getTonightSuggestions();
-      setSuggestions(res.data || []);
+      if (res.data?.planned) {
+        // Dinner is already planned
+        setPlannedRecipe(res.data.recipe);
+        setSuggestions([]);
+      } else {
+        // Show suggestions
+        setPlannedRecipe(null);
+        setSuggestions(res.data?.suggestions || []);
+      }
     } catch (error) {
       console.error('Failed to load suggestions:', error);
     } finally {
@@ -64,6 +73,72 @@ export const TonightSuggestions = () => {
           <Loader2 className="w-8 h-8 animate-spin text-sage" />
         </div>
       </div>
+    );
+  }
+
+  // If dinner is planned, show that
+  if (plannedRecipe) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-br from-sage/10 to-terracotta/10 rounded-2xl p-6 sm:p-8"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="font-heading text-2xl font-bold flex items-center gap-2">
+              <ChefHat className="w-6 h-6 text-sage" />
+              Tonight's Dinner
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              You've got this planned!
+            </p>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="bg-white rounded-xl p-4 border-2 border-sage/30 hover:shadow-md transition-all cursor-pointer group"
+          onClick={() => navigate(`/recipes/${plannedRecipe.id}`)}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 rounded-lg bg-cream-subtle flex-shrink-0 overflow-hidden">
+              {plannedRecipe.image_url ? (
+                <img
+                  src={plannedRecipe.image_url}
+                  alt={plannedRecipe.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ChefHat className="w-8 h-8 text-muted-foreground/50" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-heading font-semibold text-lg truncate group-hover:text-sage transition-colors">
+                {plannedRecipe.title}
+              </h3>
+              <div className="flex items-center gap-3 mt-2">
+                <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
+                  <Clock className="w-4 h-4" />
+                  {formatTime(plannedRecipe.total_time)}
+                </span>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${getEffortColor(plannedRecipe.effort)}`}>
+                  <Flame className="w-3 h-3" />
+                  {plannedRecipe.effort}
+                </span>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-sage group-hover:translate-x-1 transition-all" />
+          </div>
+        </motion.div>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Tap to start cooking
+        </p>
+      </motion.div>
     );
   }
 
