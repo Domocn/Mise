@@ -182,12 +182,11 @@ async def call_llm(
     user_prompt: str,
     user_id: str = None
 ) -> str:
-    """Call LLM - routes to Embedded, Ollama, OpenAI, or Claude based on user config"""
+    """Call LLM - routes to Ollama, OpenAI, or Claude based on user config"""
     # Get user-specific settings if available
     provider = settings.llm_provider
     ollama_url = settings.ollama_url
     ollama_model = settings.ollama_model
-    embedded_model = settings.embedded_model
 
     if user_id:
         user_settings = await db.llm_settings.find_one({"user_id": user_id}, {"_id": 0})
@@ -195,14 +194,11 @@ async def call_llm(
             provider = user_settings.get("provider", provider)
             ollama_url = user_settings.get("ollama_url", ollama_url)
             ollama_model = user_settings.get("ollama_model", ollama_model)
-            embedded_model = user_settings.get("embedded_model", embedded_model)
 
     # Calculate Cache Key
     key_content = f"{system_prompt}|{user_prompt}|{provider}"
     if provider == 'ollama':
         key_content += f"|{ollama_url}|{ollama_model}"
-    elif provider == 'embedded':
-        key_content += f"|{embedded_model}"
 
     cache_hash = hashlib.sha256(key_content.encode()).hexdigest()
 
@@ -216,8 +212,9 @@ async def call_llm(
 
     # Route to appropriate provider
     if provider == 'embedded':
-        result = await call_embedded(system_prompt, user_prompt, embedded_model)
-        model_used = embedded_model
+        # Embedded not available in cloud - fall back to error message
+        result = await call_embedded(system_prompt, user_prompt)
+        model_used = "embedded"
     elif provider == 'ollama':
         result = await call_ollama_with_config(client, system_prompt, user_prompt, ollama_url, ollama_model)
         model_used = ollama_model
