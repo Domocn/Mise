@@ -46,11 +46,19 @@ import {
 import { toast } from 'sonner';
 import { Switch } from '../components/ui/switch';
 
+const tabs = [
+  { id: 'user', label: 'User', icon: User },
+  { id: 'ai', label: 'AI', icon: Sparkles },
+  { id: 'household', label: 'Household', icon: Users },
+  { id: 'server', label: 'Server', icon: Server },
+];
+
 export const Settings = () => {
   const navigate = useNavigate();
   const { user, household, logout } = useAuth();
   const [serverInfo, setServerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('user');
   
   // LLM Settings
   const [llmSettings, setLlmSettings] = useState({
@@ -398,6 +406,36 @@ export const Settings = () => {
           <p className="text-muted-foreground mt-1">Manage your app preferences</p>
         </motion.div>
 
+        {/* Tab Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white dark:bg-card rounded-xl border border-border/60 p-1 flex gap-1"
+        >
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-sage text-white shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-cream-subtle'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* User Tab Content */}
+        {activeTab === 'user' && (
+          <>
         {/* Account Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -467,7 +505,12 @@ export const Settings = () => {
             </div>
           </div>
         </motion.section>
+          </>
+        )}
 
+        {/* AI Tab Content */}
+        {activeTab === 'ai' && (
+          <>
         {/* AI Settings Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -862,7 +905,12 @@ export const Settings = () => {
             </div>
           </div>
         </motion.section>
+          </>
+        )}
 
+        {/* Server Tab Content */}
+        {activeTab === 'server' && (
+          <>
         {/* Notifications Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -1099,7 +1147,12 @@ export const Settings = () => {
             </div>
           </div>
         </motion.section>
+          </>
+        )}
 
+        {/* Household Tab Content */}
+        {activeTab === 'household' && (
+          <>
         {/* Household Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -1139,7 +1192,12 @@ export const Settings = () => {
             </div>
           </div>
         </motion.section>
+          </>
+        )}
 
+        {/* Server Tab - Feedback & Support */}
+        {activeTab === 'server' && (
+          <>
         {/* Feedback & Support Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -1204,6 +1262,8 @@ export const Settings = () => {
             </a>
           </div>
         </motion.section>
+          </>
+        )}
 
         {/* App Info */}
         <motion.section
