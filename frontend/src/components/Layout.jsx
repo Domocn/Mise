@@ -51,8 +51,26 @@ export const Layout = ({ children }) => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2 group" data-testid="logo-link">
-              <div className="w-10 h-10 rounded-xl bg-mise flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                <ChefHat className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  <rect width="100" height="100" fill="#6C5CE7" />
+                  <g stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9">
+                    <path d="M35 25 Q32 20 35 15 Q38 10 35 5"/>
+                    <path d="M50 22 Q47 17 50 12 Q53 7 50 2"/>
+                    <path d="M65 25 Q62 20 65 15 Q68 10 65 5"/>
+                  </g>
+                  <g fill="#FFFFFF">
+                    <rect x="12" y="43" width="10" height="4" rx="2"/>
+                    <rect x="78" y="43" width="10" height="4" rx="2"/>
+                  </g>
+                  <path d="M20 38 L80 38 L80 42 L78 72 C77 78 72 82 65 82 L35 82 C28 82 23 78 22 72 L20 42 Z" fill="#FFFFFF"/>
+                  <rect x="18" y="35" width="64" height="8" rx="2" fill="#FFFFFF"/>
+                  <circle cx="35" cy="55" r="6" fill="#FFD93D"/>
+                  <circle cx="52" cy="50" r="6" fill="#FF6B6B"/>
+                  <circle cx="67" cy="55" r="5" fill="#00D2D3"/>
+                  <circle cx="42" cy="68" r="5" fill="#FF9F43"/>
+                  <circle cx="58" cy="65" r="4" fill="#A29BFE"/>
+                </svg>
               </div>
               <span className="font-heading font-bold text-xl text-foreground hidden sm:block">
                 Mise
