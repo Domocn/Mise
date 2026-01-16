@@ -52,10 +52,15 @@ export const AuthProvider = ({ children }) => {
     setUser(res.data.user);
     
     if (res.data.user.household_id) {
-      const hRes = await householdApi.getMy();
-      setHousehold(hRes.data);
+      try {
+        const hRes = await householdApi.getMy();
+        setHousehold(hRes.data);
+      } catch (error) {
+        console.error('Failed to fetch household:', error);
+        // Don't block login if household fetch fails
+      }
     }
-    
+
     return res.data;
   };
 
@@ -76,8 +81,13 @@ export const AuthProvider = ({ children }) => {
 
   const refreshHousehold = async () => {
     if (user?.household_id) {
-      const hRes = await householdApi.getMy();
-      setHousehold(hRes.data);
+      try {
+        const hRes = await householdApi.getMy();
+        setHousehold(hRes.data);
+      } catch (error) {
+        console.error('Failed to refresh household:', error);
+        setHousehold(null);
+      }
     } else {
       setHousehold(null);
     }
