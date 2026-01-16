@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 import httpx
-from .config import settings
+from config import settings
 from .dependencies import db, client
 
 # Import routers
