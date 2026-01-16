@@ -196,7 +196,8 @@ Find matching recipes and if search_online is {data.search_online}, suggest a ne
 
     try:
         ai_result = json.loads(result)
-    except:
+    except (json.JSONDecodeError, TypeError) as e:
+        logger.warning(f"Failed to parse AI fridge-search response: {e}")
         ai_result = {"matching_recipe_ids": [], "suggestions": [], "ai_suggestion": None}
 
     # Get full recipe data for matches
