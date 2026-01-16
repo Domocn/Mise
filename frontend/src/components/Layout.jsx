@@ -86,9 +86,11 @@ export const Layout = ({ children }) => {
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2 group" data-testid="logo-link">
-              <div className="w-9 h-9 rounded-xl bg-sage flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                <ChefHat className="w-5 h-5 text-white" />
-              </div>
+              <img 
+                src="/mise-logo.png" 
+                alt="Mise Logo" 
+                className="w-9 h-9 rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
+              />
               <span className="font-heading font-bold text-lg text-foreground hidden sm:block">
                 Mise
               </span>
