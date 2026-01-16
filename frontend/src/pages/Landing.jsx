@@ -328,8 +328,8 @@ export const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-mise-light flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-7 h-7 text-mise" />
+                  <div className={`w-14 h-14 rounded-2xl ${feature.bgColor} flex items-center justify-center mx-auto mb-4`}>
+                    <Icon className={`w-7 h-7 ${feature.iconColor}`} />
                   </div>
                   <h3 className="font-heading font-semibold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm">{feature.description}</p>
