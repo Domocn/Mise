@@ -11,7 +11,7 @@ from dependencies import db, client
 from routers import (
     auth, households, recipes, ai, meal_plans, shopping_lists,
     homeassistant, notifications, calendar, import_data, llm_settings,
-    favorites
+    favorites, prompts
 )
 
 # Setup Logging
@@ -67,6 +67,7 @@ api_router.include_router(calendar.router)
 api_router.include_router(import_data.router)
 api_router.include_router(llm_settings.router)
 api_router.include_router(favorites.router)
+api_router.include_router(prompts.router)
 
 # Categories endpoint (simple enough to keep here or move to recipes)
 @api_router.get("/categories")
@@ -85,7 +86,7 @@ async def get_config():
     return {
         "llm_provider": settings.llm_provider,
         "ollama_model": settings.ollama_model if settings.llm_provider == 'ollama' else None,
-        "version": "1.0.0",
+        "version": "1.1.0",
         "features": {
             "ai_import": True,
             "ai_fridge_search": True,
@@ -99,7 +100,7 @@ async def health_check():
     return {
         "status": "healthy",
         "app": "Mise",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "llm_provider": settings.llm_provider
     }
 

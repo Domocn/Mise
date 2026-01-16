@@ -134,3 +134,9 @@ class LLMSettingsUpdate(BaseModel):
 class ImportPlatformRequest(BaseModel):
     platform: str  # 'paprika', 'cookmate', 'json', 'text'
     data: str  # JSON string or text content
+
+# Custom AI Prompts
+class CustomPromptsUpdate(BaseModel):
+    recipe_extraction: Optional[str] = None  # Custom prompt for recipe extraction
+    meal_planning: Optional[str] = None  # Custom prompt for meal planning
+    fridge_search: Optional[str] = None  # Custom prompt for fridge/ingredient search

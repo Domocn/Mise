@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from models import ImportURLRequest, ImportTextRequest, AutoMealPlanRequest, FridgeSearchRequest
 from dependencies import db, get_current_user, call_llm, clean_llm_json
+from routers.prompts import get_user_prompt
 from bs4 import BeautifulSoup
 import json
 import logging
@@ -29,20 +30,8 @@ async def import_recipe_from_url(
         # Truncate content to fit in small model context windows (embedded models have ~2048 tokens)
         text_content = soup.get_text(separator='\n', strip=True)[:3000]
 
-        system_prompt = """You are a recipe extraction assistant. Extract recipe information from webpage content and return ONLY valid JSON.
-Return exactly this format (no markdown, no explanation):
-{
-  "title": "Recipe Name",
-  "description": "Brief description",
-  "ingredients": [{"name": "ingredient", "amount": "1", "unit": "cup"}],
-  "instructions": ["Step 1", "Step 2"],
-  "prep_time": 15,
-  "cook_time": 30,
-  "servings": 4,
-  "category": "Main Course",
-  "tags": ["tag1", "tag2"]
-}
-Categories: Breakfast, Lunch, Dinner, Dessert, Appetizer, Snack, Beverage, Other"""
+        # Get custom or default prompt
+        system_prompt = await get_user_prompt(user["id"], "recipe_extraction")
 
         result = await call_llm(
             request.app.state.http_client,
@@ -69,20 +58,8 @@ async def import_recipe_from_text(
     user: dict = Depends(get_current_user)
 ):
     """Extract recipe from pasted text using AI"""
-    system_prompt = """You are a recipe extraction assistant. Parse the provided recipe text and return ONLY valid JSON.
-Return exactly this format (no markdown, no explanation):
-{
-  "title": "Recipe Name",
-  "description": "Brief description",
-  "ingredients": [{"name": "ingredient", "amount": "1", "unit": "cup"}],
-  "instructions": ["Step 1", "Step 2"],
-  "prep_time": 15,
-  "cook_time": 30,
-  "servings": 4,
-  "category": "Dinner",
-  "tags": ["tag1", "tag2"]
-}
-If times aren't specified, estimate reasonable values. Categories: Breakfast, Lunch, Dinner, Dessert, Appetizer, Snack, Beverage, Other"""
+    # Get custom or default prompt
+    system_prompt = await get_user_prompt(user["id"], "recipe_extraction")
 
     # Truncate to fit embedded model context windows (~2048 tokens)
     result = await call_llm(
@@ -120,20 +97,8 @@ async def auto_generate_meal_plan(
     # Limit recipes and use compact JSON to fit in context window
     recipes_summary = [{"id": r["id"], "title": r["title"], "category": r["category"]} for r in recipes[:30]]
 
-    system_prompt = """You are a meal planning assistant. Create a balanced weekly meal plan using the available recipes.
-Return ONLY valid JSON in this format:
-{
-  "plan": [
-    {"day": 0, "meals": [
-      {"meal_type": "Breakfast", "recipe_id": "id", "recipe_title": "title"},
-      {"meal_type": "Lunch", "recipe_id": "id", "recipe_title": "title"},
-      {"meal_type": "Dinner", "recipe_id": "id", "recipe_title": "title"}
-    ]},
-    ...for all 7 days (day 0 = today)
-  ],
-  "notes": "Brief explanation of the plan"
-}
-Consider variety, nutrition balance, and user preferences. Use actual recipe IDs from the provided list."""
+    # Get custom or default prompt
+    system_prompt = await get_user_prompt(user["id"], "meal_planning")
 
     user_prompt = f"""Create a {data.days}-day meal plan.
 Preferences: {data.preferences or 'balanced variety'}
@@ -168,42 +133,13 @@ async def fridge_search(
 
     all_recipes = await db.recipes.find(query, {"_id": 0}).to_list(500)
 
+    # Get custom or default prompt
+    system_prompt = await get_user_prompt(user["id"], "fridge_search")
+
     # If no recipes and user wants AI suggestions, just ask for a new recipe
     if len(all_recipes) == 0 and data.search_online:
-        system_prompt = """You are a helpful cooking assistant. Given a list of ingredients, suggest ONE simple recipe.
-Return ONLY valid JSON in this format (no markdown, no explanation):
-{
-  "matching_recipe_ids": [],
-  "suggestions": [],
-  "ai_suggestion": {
-    "title": "Recipe Name",
-    "description": "Brief description",
-    "ingredients": [{"name": "ingredient", "amount": "1", "unit": "cup"}],
-    "instructions": ["Step 1", "Step 2"],
-    "prep_time": 10,
-    "cook_time": 20,
-    "servings": 4
-  }
-}"""
         user_prompt = f"I have these ingredients: {ingredients_str}. Suggest a simple recipe I can make."
     else:
-        # Use AI to find matching recipes
-        system_prompt = """You are a recipe matching assistant. Given a list of available ingredients and a list of recipes, identify which recipes can be made with the available ingredients (allowing for minor missing seasonings/staples).
-
-Return ONLY valid JSON in this format (no markdown, no explanation):
-{
-  "matching_recipe_ids": ["id1", "id2"],
-  "suggestions": [
-    {
-      "recipe_id": "id",
-      "missing_ingredients": ["ingredient1"],
-      "match_percentage": 90
-    }
-  ],
-  "ai_suggestion": null
-}
-If search_online is true and you want to suggest a NEW recipe, set ai_suggestion to a recipe object instead of null."""
-
         # Limit recipes and use compact JSON to fit in context window
         recipes_info = [{"id": r["id"], "title": r["title"], "ingredients": [i.get("name", i) if isinstance(i, dict) else i for i in r.get("ingredients", [])][:10]} for r in all_recipes[:25]]
 

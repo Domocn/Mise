@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
-import { configApi, llmApi, notificationApi } from '../lib/api';
+import { configApi, llmApi, notificationApi, promptsApi } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -14,10 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { 
-  Settings as SettingsIcon, 
-  Server, 
-  User, 
+import {
+  Settings as SettingsIcon,
+  Server,
+  User,
   LogOut,
   Cpu,
   Globe,
@@ -37,7 +37,10 @@ import {
   BellOff,
   Moon,
   Sun,
-  Palette
+  Palette,
+  Edit3,
+  RotateCcw,
+  FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Switch } from '../components/ui/switch';
@@ -72,6 +75,16 @@ export const Settings = () => {
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [savingNotifications, setSavingNotifications] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+
+  // Custom AI Prompts
+  const [customPrompts, setCustomPrompts] = useState({
+    recipe_extraction: '',
+    meal_planning: '',
+    fridge_search: ''
+  });
+  const [defaultPrompts, setDefaultPrompts] = useState({});
+  const [savingPrompts, setSavingPrompts] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState(null);
 
   // Theme Settings
   const [darkMode, setDarkMode] = useState(() => {
@@ -112,10 +125,11 @@ export const Settings = () => {
 
   const loadData = async () => {
     try {
-      const [serverRes, llmRes, notifRes] = await Promise.all([
+      const [serverRes, llmRes, notifRes, promptsRes] = await Promise.all([
         configApi.getConfig(),
         llmApi.getSettings(),
-        notificationApi.getSettings().catch(() => ({ data: {} }))
+        notificationApi.getSettings().catch(() => ({ data: {} })),
+        promptsApi.get().catch(() => ({ data: {} }))
       ]);
       setServerInfo(serverRes.data);
       setLlmSettings({
@@ -127,7 +141,7 @@ export const Settings = () => {
       if (llmRes.data.embedded_models) {
         setEmbeddedModels(llmRes.data.embedded_models);
       }
-      
+
       // Load notification settings
       if (notifRes.data) {
         setNotificationSettings(prev => ({
@@ -138,6 +152,18 @@ export const Settings = () => {
           weekly_plan_reminder: notifRes.data.weekly_plan_reminder ?? true,
           enabled: notifRes.data.enabled ?? false
         }));
+      }
+
+      // Load custom prompts
+      if (promptsRes.data) {
+        setCustomPrompts({
+          recipe_extraction: promptsRes.data.recipe_extraction || '',
+          meal_planning: promptsRes.data.meal_planning || '',
+          fridge_search: promptsRes.data.fridge_search || ''
+        });
+        if (promptsRes.data.defaults) {
+          setDefaultPrompts(promptsRes.data.defaults);
+        }
       }
     } catch (error) {
       console.error('Failed to load settings:', error);
@@ -307,6 +333,49 @@ export const Settings = () => {
     } finally {
       setSavingNotifications(false);
     }
+  };
+
+  const handleSavePrompt = async (promptType) => {
+    setSavingPrompts(true);
+    try {
+      await promptsApi.update({ [promptType]: customPrompts[promptType] });
+      toast.success('Custom prompt saved!');
+      setEditingPrompt(null);
+    } catch (error) {
+      toast.error('Failed to save prompt');
+    } finally {
+      setSavingPrompts(false);
+    }
+  };
+
+  const handleResetPrompt = async (promptType) => {
+    setCustomPrompts(prev => ({ ...prev, [promptType]: '' }));
+    try {
+      await promptsApi.update({ [promptType]: null });
+      toast.success('Prompt reset to default');
+    } catch (error) {
+      toast.error('Failed to reset prompt');
+    }
+  };
+
+  const handleResetAllPrompts = async () => {
+    try {
+      await promptsApi.reset();
+      setCustomPrompts({
+        recipe_extraction: '',
+        meal_planning: '',
+        fridge_search: ''
+      });
+      toast.success('All prompts reset to defaults');
+    } catch (error) {
+      toast.error('Failed to reset prompts');
+    }
+  };
+
+  const promptLabels = {
+    recipe_extraction: { name: 'Recipe Extraction', description: 'Used when importing recipes from URLs or text' },
+    meal_planning: { name: 'Meal Planning', description: 'Used when generating meal plans' },
+    fridge_search: { name: 'Fridge Search', description: 'Used when finding recipes by ingredients' }
   };
 
   const currentServer = localStorage.getItem('mise_server_url') || process.env.REACT_APP_BACKEND_URL;
@@ -678,7 +747,7 @@ export const Settings = () => {
             )}
 
             {/* Save Button */}
-            <Button 
+            <Button
               onClick={handleSaveLlm}
               disabled={savingLlm}
               className="rounded-full bg-sage hover:bg-sage-dark"
@@ -690,6 +759,106 @@ export const Settings = () => {
               )}
               Save AI Settings
             </Button>
+          </div>
+        </motion.section>
+
+        {/* Custom AI Prompts Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.16 }}
+          className="bg-white rounded-2xl border border-border/60 overflow-hidden"
+        >
+          <div className="p-4 border-b border-border/60 bg-cream-subtle">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading font-semibold flex items-center gap-2">
+                <FileText className="w-5 h-5 text-sage" />
+                Custom AI Prompts
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResetAllPrompts}
+                className="text-xs text-muted-foreground hover:text-destructive"
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Reset All
+              </Button>
+            </div>
+          </div>
+
+          <div className="p-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Customize the AI prompts to adjust how recipes are extracted, meal plans are generated, and ingredient searches work.
+            </p>
+
+            {Object.entries(promptLabels).map(([key, label]) => (
+              <div key={key} className="border border-border/60 rounded-xl overflow-hidden">
+                <div
+                  className="p-3 bg-cream-subtle flex items-center justify-between cursor-pointer"
+                  onClick={() => setEditingPrompt(editingPrompt === key ? null : key)}
+                >
+                  <div>
+                    <p className="font-medium text-sm">{label.name}</p>
+                    <p className="text-xs text-muted-foreground">{label.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {customPrompts[key] && (
+                      <span className="text-xs bg-sage/20 text-sage px-2 py-0.5 rounded-full">
+                        Customized
+                      </span>
+                    )}
+                    <Edit3 className={`w-4 h-4 text-muted-foreground transition-transform ${editingPrompt === key ? 'rotate-45' : ''}`} />
+                  </div>
+                </div>
+
+                {editingPrompt === key && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="p-4 space-y-3"
+                  >
+                    <textarea
+                      value={customPrompts[key] || defaultPrompts[key] || ''}
+                      onChange={(e) => setCustomPrompts(prev => ({ ...prev, [key]: e.target.value }))}
+                      placeholder={defaultPrompts[key] || 'Enter custom prompt...'}
+                      className="w-full h-48 p-3 text-sm border border-border/60 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-sage/50 font-mono"
+                    />
+                    <div className="flex items-center justify-between">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleResetPrompt(key)}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-1" />
+                        Reset to Default
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleSavePrompt(key)}
+                        disabled={savingPrompts}
+                        className="rounded-full bg-sage hover:bg-sage-dark"
+                      >
+                        {savingPrompts ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-1" />
+                        )}
+                        Save
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            ))}
+
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+              <p className="text-xs text-amber-800">
+                <strong>Note:</strong> Custom prompts must maintain the JSON output format expected by the app.
+                If AI responses fail after customizing, reset to defaults.
+              </p>
+            </div>
           </div>
         </motion.section>
 

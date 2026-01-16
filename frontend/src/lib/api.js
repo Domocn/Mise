@@ -168,6 +168,13 @@ export const llmApi = {
   testConnection: (settings) => api.post('/settings/llm/test', settings),
 };
 
+// Custom AI Prompts
+export const promptsApi = {
+  get: () => api.get('/prompts'),
+  update: (prompts) => api.put('/prompts', prompts),
+  reset: () => api.delete('/prompts'),
+};
+
 // Server Config
 export const configApi = {
   getConfig: () => api.get('/config'),
