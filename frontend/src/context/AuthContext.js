@@ -18,13 +18,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
+      console.log('[AuthContext] initAuth started');
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
-      
+      console.log('[AuthContext] token exists:', !!token, 'savedUser exists:', !!savedUser);
+
       if (token && savedUser) {
         try {
-          setUser(JSON.parse(savedUser));
+          const parsedUser = JSON.parse(savedUser);
+          console.log('[AuthContext] Setting user from localStorage:', parsedUser?.email);
+          setUser(parsedUser);
+          console.log('[AuthContext] Calling authApi.me()...');
           const res = await authApi.me();
+          console.log('[AuthContext] authApi.me() succeeded:', res.data?.email);
           setUser(res.data);
           localStorage.setItem('user', JSON.stringify(res.data));
           
@@ -39,16 +45,17 @@ export const AuthProvider = ({ children }) => {
             }
           }
         } catch (error) {
-          console.error('Auth init error:', error);
+          console.error('[AuthContext] Auth init error:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setUser(null);
           setHousehold(null);
         }
       }
+      console.log('[AuthContext] Setting loading to false');
       setLoading(false);
     };
-    
+
     initAuth();
   }, []);
 

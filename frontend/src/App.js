@@ -63,22 +63,54 @@ import { ImportFromPlatform } from './pages/ImportFromPlatform';
 
 import './App.css';
 
+// Debug component to show auth state
+const AuthDebug = () => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  // Only show in development or if there's an issue
+  if (process.env.NODE_ENV === 'production' && !loading && isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '10px',
+      left: '10px',
+      background: '#333',
+      color: '#fff',
+      padding: '10px',
+      borderRadius: '8px',
+      fontSize: '12px',
+      zIndex: 9999,
+      fontFamily: 'monospace'
+    }}>
+      <div>Loading: {loading ? 'true' : 'false'}</div>
+      <div>Auth: {isAuthenticated ? 'true' : 'false'}</div>
+      <div>User: {user ? user.email : 'null'}</div>
+    </div>
+  );
+};
+
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
+  console.log('[ProtectedRoute] loading:', loading, 'isAuthenticated:', isAuthenticated);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-mise border-t-transparent rounded-full animate-spin" />
+        <span className="ml-4 text-gray-600">Loading auth...</span>
       </div>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -137,6 +169,7 @@ function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
+          <AuthDebug />
           <AppRoutes />
           <InstallPrompt />
           <Toaster
