@@ -416,7 +416,7 @@ export const Settings = () => {
             {/* Provider Selection */}
             <div>
               <Label className="mb-3 block">AI Provider</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   onClick={() => setLlmSettings({ ...llmSettings, provider: 'openai' })}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
@@ -429,7 +429,24 @@ export const Settings = () => {
                     <Cloud className={`w-6 h-6 ${llmSettings.provider === 'openai' ? 'text-sage' : 'text-muted-foreground'}`} />
                     <div>
                       <p className="font-medium text-sm">OpenAI</p>
-                      <p className="text-xs text-muted-foreground">Cloud API</p>
+                      <p className="text-xs text-muted-foreground">GPT-4o</p>
+                    </div>
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => setLlmSettings({ ...llmSettings, provider: 'anthropic' })}
+                  className={`p-4 rounded-xl border-2 text-left transition-all ${
+                    llmSettings.provider === 'anthropic'
+                      ? 'border-sage bg-sage-light'
+                      : 'border-border/60 hover:border-sage'
+                  }`}
+                >
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <Sparkles className={`w-6 h-6 ${llmSettings.provider === 'anthropic' ? 'text-sage' : 'text-muted-foreground'}`} />
+                    <div>
+                      <p className="font-medium text-sm">Claude</p>
+                      <p className="text-xs text-muted-foreground">Anthropic</p>
                     </div>
                   </div>
                 </button>
@@ -469,6 +486,38 @@ export const Settings = () => {
                 </button>
               </div>
             </div>
+
+            {/* Anthropic/Claude Configuration */}
+            {llmSettings.provider === 'anthropic' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-4 p-4 bg-cream-subtle rounded-xl"
+              >
+                <div>
+                  <Label htmlFor="anthropic-key" className="mb-2 block">Anthropic API Key</Label>
+                  <Input
+                    id="anthropic-key"
+                    type="password"
+                    placeholder="sk-ant-..."
+                    value={llmSettings.anthropic_api_key || ''}
+                    onChange={(e) => setLlmSettings({ ...llmSettings, anthropic_api_key: e.target.value })}
+                    className="rounded-xl"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Get your API key from{' '}
+                    <a 
+                      href="https://console.anthropic.com/settings/keys" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sage hover:underline"
+                    >
+                      console.anthropic.com
+                    </a>
+                  </p>
+                </div>
+              </motion.div>
+            )}
 
             {/* Embedded Configuration */}
             {llmSettings.provider === 'embedded' && (

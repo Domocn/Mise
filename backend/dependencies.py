@@ -155,6 +155,50 @@ async def call_openai(
         logger.error(f"OpenAI error: {e}")
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
+
+async def call_anthropic(
+    client: httpx.AsyncClient,
+    system_prompt: str,
+    user_prompt: str
+) -> str:
+    """Call Anthropic Claude API"""
+    try:
+        api_key = settings.anthropic_api_key
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Anthropic API key not configured")
+
+        response = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            },
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 2000,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": user_prompt}
+                ]
+            },
+            timeout=120.0
+        )
+
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail=f"Anthropic error: {response.text}")
+
+        result = response.json()
+        # Extract text from content blocks
+        content = result.get("content", [])
+        text_parts = [block.get("text", "") for block in content if block.get("type") == "text"]
+        return "".join(text_parts)
+    except httpx.ConnectError:
+        raise HTTPException(status_code=503, detail="Cannot connect to Anthropic API")
+    except Exception as e:
+        logger.error(f"Anthropic error: {e}")
+        raise HTTPException(status_code=500, detail=f"Claude AI error: {str(e)}")
+
 async def call_ollama_with_config(
     client: httpx.AsyncClient,
     system_prompt: str,
@@ -198,7 +242,7 @@ async def call_llm(
     user_prompt: str,
     user_id: str = None
 ) -> str:
-    """Call LLM - routes to Embedded, Ollama, or OpenAI based on user config"""
+    """Call LLM - routes to Embedded, Ollama, OpenAI, or Claude based on user config"""
     # Get user-specific settings if available
     provider = settings.llm_provider
     ollama_url = settings.ollama_url
@@ -237,7 +281,10 @@ async def call_llm(
     elif provider == 'ollama':
         result = await call_ollama_with_config(client, system_prompt, user_prompt, ollama_url, ollama_model)
         model_used = ollama_model
-    else:
+    elif provider == 'anthropic':
+        result = await call_anthropic(client, system_prompt, user_prompt)
+        model_used = "claude-sonnet-4-20250514"
+    else:  # openai
         result = await call_openai(client, system_prompt, user_prompt)
         model_used = "gpt-4o"
 
