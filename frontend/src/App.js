@@ -63,22 +63,49 @@ import { ImportFromPlatform } from './pages/ImportFromPlatform';
 
 import './App.css';
 
+// Debug component to show auth state - ALWAYS visible for debugging
+const AuthDebug = () => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      right: '0',
+      background: 'red',
+      color: 'white',
+      padding: '20px',
+      fontSize: '18px',
+      zIndex: 2147483647,
+      fontFamily: 'monospace',
+      fontWeight: 'bold',
+      textAlign: 'center'
+    }}>
+      DEBUG: Loading={loading ? 'TRUE' : 'FALSE'} | Auth={isAuthenticated ? 'TRUE' : 'FALSE'} | User={user ? user.email : 'NULL'}
+    </div>
+  );
+};
+
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
+  console.log('[ProtectedRoute] loading:', loading, 'isAuthenticated:', isAuthenticated);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-mise border-t-transparent rounded-full animate-spin" />
+        <span className="ml-4 text-gray-600">Loading auth...</span>
       </div>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -137,6 +164,7 @@ function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
+          <AuthDebug />
           <AppRoutes />
           <InstallPrompt />
           <Toaster
