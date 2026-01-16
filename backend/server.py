@@ -93,6 +93,27 @@ async def health_check():
         "llm_provider": settings.llm_provider
     }
 
+@api_router.get("/shared/{share_id}")
+async def get_shared_recipe(share_id: str):
+    """Get a publicly shared recipe (no auth required)"""
+    from datetime import datetime, timezone
+
+    share = await db.recipe_shares.find_one({"id": share_id}, {"_id": 0})
+    if not share:
+        raise HTTPException(status_code=404, detail="Shared recipe not found")
+
+    # Check expiration
+    if share.get("expires_at"):
+        expires = datetime.fromisoformat(share["expires_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expires:
+            raise HTTPException(status_code=410, detail="Share link has expired")
+
+    recipe = await db.recipes.find_one({"id": share["recipe_id"]}, {"_id": 0})
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    return recipe
+
 # Static Files
 @api_router.get("/uploads/{filename}")
 async def get_upload(filename: str):
