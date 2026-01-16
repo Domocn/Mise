@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from ..dependencies import db, get_current_user
+from dependencies import db, get_current_user
 import uuid
 
 router = APIRouter(prefix="/calendar", tags=["Calendar"])

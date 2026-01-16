@@ -6,6 +6,8 @@ import logging
 import httpx
 from config import settings
 from dependencies import db, client
+
+# Import routers
 from routers import (
     auth, households, recipes, ai, meal_plans, shopping_lists,
     homeassistant, notifications, calendar, import_data, llm_settings,
@@ -23,6 +25,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     app.state.http_client = httpx.AsyncClient()
+
     # Create indices
     try:
         await db.users.create_index("email", unique=True)
@@ -32,13 +35,13 @@ async def lifespan(app: FastAPI):
         await db.recipes.create_index("household_id")
     except Exception as e:
         logger.error(f"Failed to create indices: {e}")
+
     yield
     # Shutdown
     await app.state.http_client.aclose()
     client.close()
 
 app = FastAPI(lifespan=lifespan, title="Mise API")
-
 api_router = APIRouter(prefix="/api")
 
 # Include routers
@@ -55,6 +58,7 @@ api_router.include_router(import_data.router)
 api_router.include_router(llm_settings.router)
 api_router.include_router(favorites.router)
 
+# Categories endpoint (simple enough to keep here or move to recipes)
 @api_router.get("/categories")
 async def get_categories():
     return {
@@ -64,6 +68,7 @@ async def get_categories():
         ]
     }
 
+# Config endpoint
 @api_router.get("/config")
 async def get_config():
     """Get server configuration for clients"""
@@ -88,10 +93,12 @@ async def health_check():
         "llm_provider": settings.llm_provider
     }
 
+# Static Files
 @api_router.get("/uploads/{filename}")
 async def get_upload(filename: str):
     from fastapi.responses import FileResponse
     from pathlib import Path
+
     upload_dir = Path(settings.upload_dir)
     try:
         file_path = (upload_dir / filename).resolve()
@@ -99,12 +106,14 @@ async def get_upload(filename: str):
             raise HTTPException(status_code=404, detail="File not found")
     except ValueError:
         raise HTTPException(status_code=404, detail="File not found")
+
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_path)
 
 app.include_router(api_router)
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

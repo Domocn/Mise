@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from ..models import ImportPlatformRequest
-from ..dependencies import db, get_current_user
+from models import ImportPlatformRequest
+from dependencies import db, get_current_user
 import json
 import uuid
 from datetime import datetime, timezone

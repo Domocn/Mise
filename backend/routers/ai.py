@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
-from ..models import ImportURLRequest, ImportTextRequest, AutoMealPlanRequest, FridgeSearchRequest
-from ..dependencies import db, get_current_user, call_llm, clean_llm_json
+from models import ImportURLRequest, ImportTextRequest, AutoMealPlanRequest, FridgeSearchRequest
+from dependencies import db, get_current_user, call_llm, clean_llm_json
 from bs4 import BeautifulSoup
 import json
 import logging

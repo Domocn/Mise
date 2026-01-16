@@ -1,40 +1,49 @@
 services:
-  mise:
-    image: domocn/mise:latest
-    container_name: mise-app
+  frontend:
+    image: ghcr.io/domocn/mise-frontend:latest
+    container_name: mise-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:80"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8001
+    depends_on:
+      - backend
+
+  backend:
+    image: ghcr.io/domocn/mise-backend:latest
+    container_name: mise-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
     volumes:
       - mise_uploads:/app/uploads
       - mise_models:/app/models
     environment:
-      # Core settings (required)
-      DATABASE_URL: mongodb://db:27017/mise
-      JWT_SECRET: <32-byte-secret>  # Generate with: openssl rand -base64 32
-
+      MONGO_URL: mongodb://db:27017
+      DB_NAME: mise
+      JWT_SECRET: change-me-to-a-secure-secret  # Generate with: openssl rand -base64 32
+      CORS_ORIGINS: "*"
       # ─────────────────────────────────────────────────────────────────────────
       # AI CONFIGURATION (choose one)
       # ─────────────────────────────────────────────────────────────────────────
-      
       # Option 1: Embedded AI (100% offline, no setup needed)
-      # Models download automatically on first use
       LLM_PROVIDER: embedded
       # EMBEDDED_MODEL: Phi-3-mini-4k-instruct.Q4_0.gguf  # Default, 2.2GB, 4GB RAM
       # EMBEDDED_MODEL: Llama-3.2-3B-Instruct-Q4_0.gguf  # 2.0GB, 4GB RAM
       # EMBEDDED_MODEL: Mistral-7B-Instruct-v0.3.Q4_0.gguf  # 4.4GB, 8GB RAM
-
       # Option 2: Ollama (faster, requires ollama service below)
       # LLM_PROVIDER: ollama
       # OLLAMA_URL: http://ollama:11434
       # OLLAMA_MODEL: llama3
-
       # Option 3: OpenAI (cloud, requires API key)
       # LLM_PROVIDER: openai
       # OPENAI_API_KEY: sk-your-api-key-here
-
+      # Option 4: Claude/Anthropic (cloud, requires API key)
+      # LLM_PROVIDER: anthropic
+      # ANTHROPIC_API_KEY: sk-ant-your-api-key-here
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
       interval: 1m
       timeout: 15s
       retries: 3
@@ -60,14 +69,6 @@ services:
   #     - "11434:11434"
   #   volumes:
   #     - mise_ollama:/root/.ollama
-  #   # Uncomment for NVIDIA GPU support:
-  #   # deploy:
-  #   #   resources:
-  #   #     reservations:
-  #   #       devices:
-  #   #         - driver: nvidia
-  #   #           count: 1
-  #   #           capabilities: [gpu]
 
 volumes:
   mise_db:
