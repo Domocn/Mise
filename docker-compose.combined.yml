@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   mise:
-    build:
-      context: .
-      dockerfile: Dockerfile.combined
+    image: ghcr.io/domocn/mise:latest
     container_name: mise-app
     restart: unless-stopped
     ports:
