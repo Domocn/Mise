@@ -1,11 +1,17 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 import httpx
+import os
+from pathlib import Path
 from config import settings
 from dependencies import db, client
+
+# Frontend build directory (for serving React app)
+FRONTEND_BUILD_DIR = Path(os.environ.get("FRONTEND_BUILD_DIR", "/app/frontend/build"))
 
 # Import routers
 from routers import (
@@ -145,3 +151,42 @@ async def get_upload(filename: str):
     return FileResponse(file_path)
 
 app.include_router(api_router)
+
+# Serve frontend static files if the build directory exists
+if FRONTEND_BUILD_DIR.exists():
+    # Mount static assets (js, css, images, etc.)
+    static_dir = FRONTEND_BUILD_DIR / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    # Serve other static files (manifest.json, favicon, etc.)
+    @app.get("/manifest.json")
+    async def serve_manifest():
+        return FileResponse(FRONTEND_BUILD_DIR / "manifest.json")
+
+    @app.get("/favicon.ico")
+    async def serve_favicon():
+        return FileResponse(FRONTEND_BUILD_DIR / "favicon.ico")
+
+    @app.get("/mise-logo.png")
+    async def serve_logo():
+        return FileResponse(FRONTEND_BUILD_DIR / "mise-logo.png")
+
+    # Catch-all route for React Router - must be last
+    @app.get("/{full_path:path}")
+    async def serve_react_app(request: Request, full_path: str):
+        # Don't serve index.html for API routes
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Not found")
+
+        # Try to serve the exact file first (for assets)
+        file_path = FRONTEND_BUILD_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+
+        # Otherwise serve index.html for client-side routing
+        index_path = FRONTEND_BUILD_DIR / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+
+        raise HTTPException(status_code=404, detail="Not found")

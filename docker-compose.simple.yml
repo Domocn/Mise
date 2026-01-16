@@ -1,21 +1,11 @@
 services:
-  frontend:
-    image: ghcr.io/domocn/mise-frontend:latest
-    container_name: mise-frontend
+  # Combined Mise app (frontend + backend on single port)
+  mise:
+    build: .
+    container_name: mise-app
     restart: unless-stopped
     ports:
-      - "3001:80"
-    environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8001
-    depends_on:
-      - backend
-
-  backend:
-    image: ghcr.io/domocn/mise-backend:latest
-    container_name: mise-backend
-    restart: unless-stopped
-    ports:
-      - "8001:8001"
+      - "3000:8001"  # Access at http://localhost:3000
     volumes:
       - mise_uploads:/app/uploads
       - mise_models:/app/models

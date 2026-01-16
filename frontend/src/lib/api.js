@@ -1,49 +1,25 @@
 import axios from 'axios';
 
-// Runtime backend URL - this placeholder gets replaced by docker-entrypoint.sh at container startup
-// DO NOT CHANGE this string - it must match the placeholder in docker-entrypoint.sh
-const RUNTIME_BACKEND_URL = '%REACT_APP_BACKEND_URL%';
-
-// Get server URL - check localStorage first, then runtime env, then fallback
+// Get server URL - defaults to same origin (empty string)
+// Can be overridden via localStorage for separate frontend/backend deployments
 const getServerUrl = () => {
   const savedUrl = localStorage.getItem('mise_server_url');
   if (savedUrl) {
     return savedUrl;
   }
-  // Check if runtime placeholder was replaced (doesn't start with %)
-  if (RUNTIME_BACKEND_URL && !RUNTIME_BACKEND_URL.startsWith('%')) {
-    return RUNTIME_BACKEND_URL;
-  }
-  // Fallback to build-time env or empty
-  return process.env.REACT_APP_BACKEND_URL || '';
-};
-
-// Check if server is configured
-const isServerConfigured = () => {
-  const url = getServerUrl();
-  return url && url.length > 0;
+  // Default to same origin (frontend and backend on same port)
+  return '';
 };
 
 const api = axios.create({
   baseURL: getServerUrl() + '/api',
 });
 
-// Update baseURL when it might have changed
+// Request interceptor - add auth token
 api.interceptors.request.use((config) => {
-  // Check if server is configured
-  if (!isServerConfigured()) {
-    // Redirect to server config page
-    if (window.location.pathname !== '/server') {
-      window.location.href = '/server';
-    }
-    return Promise.reject(new Error('Server not configured. Please configure your server URL.'));
-  }
-
-  // Dynamically update baseURL in case it changed
+  // Update baseURL in case it changed (for separate server config)
   const currentUrl = getServerUrl();
-  if (currentUrl) {
-    config.baseURL = currentUrl + '/api';
-  }
+  config.baseURL = currentUrl + '/api';
 
   const token = localStorage.getItem('token');
   if (token) {
