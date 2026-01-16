@@ -50,7 +50,7 @@ const tabs = [
   { id: 'user', label: 'User', icon: User },
   { id: 'ai', label: 'AI', icon: Sparkles },
   { id: 'household', label: 'Household', icon: Users },
-  { id: 'server', label: 'Server', icon: Server },
+  { id: 'admin', label: 'Admin', icon: Server },
 ];
 
 export const Settings = () => {
@@ -908,8 +908,8 @@ export const Settings = () => {
           </>
         )}
 
-        {/* Server Tab Content */}
-        {activeTab === 'server' && (
+        {/* Admin Tab Content */}
+        {activeTab === 'admin' && (
           <>
         {/* Notifications Section */}
         <motion.section
@@ -1195,8 +1195,8 @@ export const Settings = () => {
           </>
         )}
 
-        {/* Server Tab - Feedback & Support */}
-        {activeTab === 'server' && (
+        {/* Admin Tab - Feedback & Support */}
+        {activeTab === 'admin' && (
           <>
         {/* Feedback & Support Section */}
         <motion.section
