@@ -137,10 +137,9 @@ class FridgeSearchRequest(BaseModel):
     search_online: bool = False
 
 class LLMSettingsUpdate(BaseModel):
-    provider: str  # 'openai', 'ollama', or 'embedded'
+    provider: str  # 'openai', 'anthropic', or 'ollama'
     ollama_url: Optional[str] = 'http://localhost:11434'
     ollama_model: Optional[str] = 'llama3'
-    embedded_model: Optional[str] = 'Phi-3-mini-4k-instruct.Q4_0.gguf'
 
 class ImportPlatformRequest(BaseModel):
     platform: str  # 'paprika', 'cookmate', 'json', 'text'
