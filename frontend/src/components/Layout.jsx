@@ -29,11 +29,11 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { path: '/dashboard', label: 'Home', icon: Home },
-  { path: '/recipes', label: 'Recipes', icon: UtensilsCrossed },
-  { path: '/meal-planner', label: 'Meal Plan', icon: CalendarDays },
-  { path: '/shopping', label: 'Shopping', icon: ShoppingCart },
-  { path: '/fridge', label: 'My Fridge', icon: Refrigerator },
+  { path: '/dashboard', label: 'Home', icon: Home, activeColor: 'text-mise', activeBg: 'bg-mise-light' },
+  { path: '/recipes', label: 'Recipes', icon: UtensilsCrossed, activeColor: 'text-coral', activeBg: 'bg-coral-light' },
+  { path: '/meal-planner', label: 'Meal Plan', icon: CalendarDays, activeColor: 'text-teal', activeBg: 'bg-teal-light' },
+  { path: '/shopping', label: 'Shopping', icon: ShoppingCart, activeColor: 'text-tangerine', activeBg: 'bg-tangerine-light' },
+  { path: '/fridge', label: 'My Fridge', icon: Refrigerator, activeColor: 'text-fresh', activeBg: 'bg-fresh-light' },
 ];
 
 export const Layout = ({ children }) => {
