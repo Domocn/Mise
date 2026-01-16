@@ -175,6 +175,51 @@ In Settings → AI → select **OpenAI** → enter your API key.
 | MongoDB | localhost:27017 | Database |
 | Ollama (optional) | http://localhost:11434 | Faster local LLM |
 
+## Network Access Setup
+
+If accessing Mise from other devices on your network (phone, tablet, other computers), you need to configure the backend URL:
+
+### Option 1: Environment Variable (Recommended)
+
+Set the `BACKEND_URL` to your server's IP address:
+
+```bash
+# Find your server's IP
+hostname -I | awk '{print $1}'
+
+# Set in .env file
+echo "BACKEND_URL=http://YOUR_SERVER_IP:8001" > .env
+
+# Or export directly
+export BACKEND_URL=http://192.168.1.100:8001
+```
+
+Then rebuild:
+```bash
+docker-compose build frontend
+docker-compose up -d
+```
+
+### Option 2: Edit docker-compose.yml
+
+Change line 82 in `docker-compose.yml`:
+
+```yaml
+frontend:
+  environment:
+    - REACT_APP_BACKEND_URL=http://YOUR_SERVER_IP:8001
+```
+
+Replace `YOUR_SERVER_IP` with your actual server IP (e.g., `192.168.1.100`).
+
+### Option 3: Manual Configuration
+
+1. Open `http://YOUR_SERVER_IP:3001/server` in your browser
+2. Enter `http://YOUR_SERVER_IP:8001` as the server URL
+3. Click **Test** then **Connect & Continue**
+
+> **Note:** Using `localhost` only works when accessing from the same machine. For network access, use your server's actual IP address.
+
 ## Configuration
 
 Environment variables:
