@@ -95,7 +95,7 @@ export const Recipes = () => {
               </Button>
             </Link>
             <Link to="/recipes/new">
-              <Button className="rounded-full bg-sage hover:bg-sage-dark" data-testid="new-recipe-btn">
+              <Button className="rounded-full bg-mise hover:bg-mise-dark" data-testid="new-recipe-btn">
                 <Plus className="w-4 h-4 mr-2" />
                 New Recipe
               </Button>
@@ -135,8 +135,8 @@ export const Recipes = () => {
                 onClick={() => handleCategoryChange(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   category === cat
-                    ? 'bg-sage text-white shadow-sm'
-                    : 'bg-white text-foreground border border-border/60 hover:bg-sage-light'
+                    ? 'bg-mise text-white shadow-sm'
+                    : 'bg-white text-foreground border border-border/60 hover:bg-mise-light'
                 }`}
                 data-testid={`category-${cat.toLowerCase()}`}
               >
@@ -159,8 +159,8 @@ export const Recipes = () => {
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl border border-border/60 p-12 text-center"
           >
-            <div className="w-16 h-16 rounded-full bg-sage-light mx-auto mb-4 flex items-center justify-center">
-              <Search className="w-8 h-8 text-sage" />
+            <div className="w-16 h-16 rounded-full bg-mise-light mx-auto mb-4 flex items-center justify-center">
+              <Search className="w-8 h-8 text-mise" />
             </div>
             <h3 className="font-heading text-lg font-semibold mb-2">No recipes found</h3>
             <p className="text-muted-foreground mb-6">
@@ -169,7 +169,7 @@ export const Recipes = () => {
                 : 'Start adding recipes to your collection'}
             </p>
             <Link to="/recipes/new">
-              <Button className="rounded-full bg-sage hover:bg-sage-dark">
+              <Button className="rounded-full bg-mise hover:bg-mise-dark">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Recipe
               </Button>

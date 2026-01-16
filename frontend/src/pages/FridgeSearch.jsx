@@ -85,8 +85,8 @@ export const FridgeSearch = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-sage-light mx-auto mb-4 flex items-center justify-center">
-            <Refrigerator className="w-8 h-8 text-sage" />
+          <div className="w-16 h-16 rounded-2xl bg-mise-light mx-auto mb-4 flex items-center justify-center">
+            <Refrigerator className="w-8 h-8 text-mise" />
           </div>
           <h1 className="font-heading text-3xl font-bold">What's in My Fridge?</h1>
           <p className="text-muted-foreground mt-2">
@@ -112,7 +112,7 @@ export const FridgeSearch = () => {
             />
             <Button 
               onClick={() => inputValue.trim() && addIngredient(inputValue)}
-              className="rounded-xl bg-sage hover:bg-sage-dark"
+              className="rounded-xl bg-mise hover:bg-mise-dark"
               disabled={!inputValue.trim()}
             >
               <Plus className="w-4 h-4" />
@@ -126,12 +126,12 @@ export const FridgeSearch = () => {
                 <Badge 
                   key={ing} 
                   variant="secondary"
-                  className="bg-sage-light text-sage px-3 py-1.5 text-sm"
+                  className="bg-mise-light text-mise px-3 py-1.5 text-sm"
                 >
                   {ing}
                   <button 
                     onClick={() => removeIngredient(ing)}
-                    className="ml-2 hover:text-sage-dark"
+                    className="ml-2 hover:text-mise-dark"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -148,7 +148,7 @@ export const FridgeSearch = () => {
                 <button
                   key={ing}
                   onClick={() => addIngredient(ing)}
-                  className="px-3 py-1.5 rounded-full text-sm bg-cream-subtle hover:bg-sage-light text-foreground transition-colors"
+                  className="px-3 py-1.5 rounded-full text-sm bg-cream-subtle hover:bg-mise-light text-foreground transition-colors"
                 >
                   + {ing}
                 </button>
@@ -164,7 +164,7 @@ export const FridgeSearch = () => {
                 onCheckedChange={(checked) => setSearchOnline(checked)}
               />
               <span className="text-sm">
-                <Sparkles className="w-4 h-4 inline mr-1 text-terracotta" />
+                <Sparkles className="w-4 h-4 inline mr-1 text-coral" />
                 Suggest new recipes with AI
               </span>
             </label>
@@ -173,7 +173,7 @@ export const FridgeSearch = () => {
           {/* Search Button */}
           <Button 
             onClick={handleSearch}
-            className="w-full mt-6 rounded-full bg-sage hover:bg-sage-dark h-12"
+            className="w-full mt-6 rounded-full bg-mise hover:bg-mise-dark h-12"
             disabled={loading || ingredients.length === 0}
             data-testid="search-recipes-btn"
           >
@@ -241,9 +241,9 @@ export const FridgeSearch = () => {
 
             {/* AI Suggestion */}
             {results.ai_recipe_suggestion && (
-              <div className="bg-terracotta-light rounded-2xl border border-terracotta/20 p-6">
+              <div className="bg-coral-light rounded-2xl border border-coral/20 p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-terracotta" />
+                  <Sparkles className="w-5 h-5 text-coral" />
                   <h2 className="font-heading text-lg font-semibold">AI Recipe Suggestion</h2>
                 </div>
                 <div className="bg-white rounded-xl p-4">
@@ -280,7 +280,7 @@ export const FridgeSearch = () => {
                   Try adding more ingredients or create a new recipe!
                 </p>
                 <Link to="/recipes/new">
-                  <Button className="rounded-full bg-sage hover:bg-sage-dark">
+                  <Button className="rounded-full bg-mise hover:bg-mise-dark">
                     <Plus className="w-4 h-4 mr-2" />
                     Create Recipe
                   </Button>

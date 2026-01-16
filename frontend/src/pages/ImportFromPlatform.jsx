@@ -174,11 +174,11 @@ export const ImportFromPlatform = () => {
             Back to Recipes
           </Button>
           
-          <h1 className="text-3xl font-bold text-sage-800 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-mise-800 flex items-center gap-3">
             <Download className="w-8 h-8" />
             Import Recipes
           </h1>
-          <p className="text-sage-600 mt-2">
+          <p className="text-mise-600 mt-2">
             Import your recipes from other apps or JSON files
           </p>
         </motion.div>
@@ -195,7 +195,7 @@ export const ImportFromPlatform = () => {
               key={platform.id}
               className={`cursor-pointer transition-all hover:shadow-md ${
                 selectedPlatform === platform.id 
-                  ? 'ring-2 ring-sage-500 bg-sage-50' 
+                  ? 'ring-2 ring-mise-500 bg-mise-50' 
                   : 'hover:bg-cream-100'
               }`}
               onClick={() => setSelectedPlatform(platform.id)}
@@ -275,8 +275,8 @@ export const ImportFromPlatform = () => {
                 </div>
 
                 {/* Sample Format */}
-                <details className="bg-sage-50 rounded-lg p-4">
-                  <summary className="cursor-pointer text-sm font-medium text-sage-700">
+                <details className="bg-mise-50 rounded-lg p-4">
+                  <summary className="cursor-pointer text-sm font-medium text-mise-700">
                     View expected format
                   </summary>
                   <pre className="mt-2 text-xs overflow-x-auto p-2 bg-white rounded border">
@@ -288,7 +288,7 @@ export const ImportFromPlatform = () => {
                 <Button
                   onClick={handleImport}
                   disabled={importing || !jsonData.trim()}
-                  className="w-full bg-sage-600 hover:bg-sage-700"
+                  className="w-full bg-mise-600 hover:bg-mise-700"
                   data-testid="import-btn"
                 >
                   {importing ? (
@@ -320,7 +320,7 @@ export const ImportFromPlatform = () => {
                         <h3 className="text-xl font-semibold text-green-700">
                           Import Successful!
                         </h3>
-                        <p className="text-sage-600 mt-2">
+                        <p className="text-mise-600 mt-2">
                           {result.imported} recipe(s) have been added to your collection.
                         </p>
                         {result.errors?.length > 0 && (
@@ -337,7 +337,7 @@ export const ImportFromPlatform = () => {
                         )}
                         <Button
                           onClick={() => navigate('/recipes')}
-                          className="mt-6 bg-sage-600 hover:bg-sage-700"
+                          className="mt-6 bg-mise-600 hover:bg-mise-700"
                           data-testid="view-recipes-btn"
                         >
                           View Your Recipes
@@ -349,7 +349,7 @@ export const ImportFromPlatform = () => {
                         <h3 className="text-xl font-semibold text-red-700">
                           Import Failed
                         </h3>
-                        <p className="text-sage-600 mt-2">{result.error}</p>
+                        <p className="text-mise-600 mt-2">{result.error}</p>
                       </div>
                     )}
                   </CardContent>

@@ -38,7 +38,7 @@ export const SharedRecipe = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-sage" />
+        <Loader2 className="w-8 h-8 animate-spin text-mise" />
       </div>
     );
   }
@@ -51,7 +51,7 @@ export const SharedRecipe = () => {
           <h1 className="font-heading text-2xl font-bold mb-2">Recipe Not Found</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
           <Link to="/">
-            <Button className="rounded-full bg-sage hover:bg-sage-dark">
+            <Button className="rounded-full bg-mise hover:bg-mise-dark">
               Go to Mise
             </Button>
           </Link>
@@ -68,8 +68,26 @@ export const SharedRecipe = () => {
       <header className="bg-white border-b border-border/40 py-4">
         <div className="max-w-4xl mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-sage flex items-center justify-center">
-              <ChefHat className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden">
+              <svg viewBox="0 0 100 100" className="w-full h-full">
+                <rect width="100" height="100" fill="#6C5CE7" />
+                <g stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9">
+                  <path d="M35 25 Q32 20 35 15 Q38 10 35 5"/>
+                  <path d="M50 22 Q47 17 50 12 Q53 7 50 2"/>
+                  <path d="M65 25 Q62 20 65 15 Q68 10 65 5"/>
+                </g>
+                <g fill="#FFFFFF">
+                  <rect x="12" y="43" width="10" height="4" rx="2"/>
+                  <rect x="78" y="43" width="10" height="4" rx="2"/>
+                </g>
+                <path d="M20 38 L80 38 L80 42 L78 72 C77 78 72 82 65 82 L35 82 C28 82 23 78 22 72 L20 42 Z" fill="#FFFFFF"/>
+                <rect x="18" y="35" width="64" height="8" rx="2" fill="#FFFFFF"/>
+                <circle cx="35" cy="55" r="6" fill="#FFD93D"/>
+                <circle cx="52" cy="50" r="6" fill="#FF6B6B"/>
+                <circle cx="67" cy="55" r="5" fill="#00D2D3"/>
+                <circle cx="42" cy="68" r="5" fill="#FF9F43"/>
+                <circle cx="58" cy="65" r="4" fill="#A29BFE"/>
+              </svg>
             </div>
             <span className="font-heading font-bold">Mise</span>
           </Link>
@@ -115,7 +133,7 @@ export const SharedRecipe = () => {
             <div className="flex flex-wrap gap-6 mb-8 pb-8 border-b border-border/60">
               {totalTime > 0 && (
                 <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-sage" />
+                  <Clock className="w-5 h-5 text-mise" />
                   <div>
                     <p className="text-xs text-muted-foreground">Total Time</p>
                     <p className="font-medium">{formatTime(totalTime)}</p>
@@ -124,7 +142,7 @@ export const SharedRecipe = () => {
               )}
               {recipe.servings > 0 && (
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-sage" />
+                  <Users className="w-5 h-5 text-mise" />
                   <div>
                     <p className="text-xs text-muted-foreground">Servings</p>
                     <p className="font-medium">{recipe.servings}</p>
@@ -139,7 +157,7 @@ export const SharedRecipe = () => {
                 {recipe.tags.map((tag, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 rounded-full bg-sage-light text-sage text-sm"
+                    className="px-3 py-1 rounded-full bg-mise-light text-mise text-sm"
                   >
                     {tag}
                   </span>
@@ -150,13 +168,13 @@ export const SharedRecipe = () => {
             {/* Ingredients */}
             <section className="mb-8">
               <h2 className="font-heading text-xl font-semibold mb-4 flex items-center gap-2">
-                <ChefHat className="w-5 h-5 text-sage" />
+                <ChefHat className="w-5 h-5 text-mise" />
                 Ingredients
               </h2>
               <ul className="space-y-2">
                 {recipe.ingredients.map((ing, idx) => (
                   <li key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-cream-subtle">
-                    <span className="w-2 h-2 rounded-full bg-sage mt-2 flex-shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-mise mt-2 flex-shrink-0" />
                     <span>
                       <span className="font-medium">{ing.amount}</span>
                       {ing.unit && <span className="text-muted-foreground"> {ing.unit}</span>}
@@ -173,7 +191,7 @@ export const SharedRecipe = () => {
               <ol className="space-y-4">
                 {recipe.instructions.map((step, idx) => (
                   <li key={idx} className="flex gap-4">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-sage text-white flex items-center justify-center font-semibold text-sm">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-mise text-white flex items-center justify-center font-semibold text-sm">
                       {idx + 1}
                     </span>
                     <p className="pt-1">{step}</p>
@@ -188,7 +206,7 @@ export const SharedRecipe = () => {
                 Want to save this recipe and plan your meals?
               </p>
               <Link to="/register">
-                <Button className="rounded-full bg-sage hover:bg-sage-dark">
+                <Button className="rounded-full bg-mise hover:bg-mise-dark">
                   Join Mise Free
                 </Button>
               </Link>
