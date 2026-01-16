@@ -18,34 +18,41 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('user');
-      
-      if (token && savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-          const res = await authApi.me();
-          setUser(res.data);
-          localStorage.setItem('user', JSON.stringify(res.data));
+      try {
+        const token = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
 
-          // Fetch household (separate try-catch to not log user out if this fails)
-          if (res.data.household_id) {
-            try {
-              const hRes = await householdApi.getMy();
-              setHousehold(hRes.data);
-            } catch (hError) {
-              console.error('Failed to fetch household:', hError);
+        if (token && savedUser) {
+          try {
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
+            const res = await authApi.me();
+            setUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+
+            // Fetch household (separate try-catch to not log user out if this fails)
+            if (res.data.household_id) {
+              try {
+                const hRes = await householdApi.getMy();
+                setHousehold(hRes.data);
+              } catch (hError) {
+                console.error('Failed to fetch household:', hError);
+              }
             }
+          } catch (error) {
+            console.error('Auth init error:', error);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
           }
-        } catch (error) {
-          console.error('Auth init error:', error);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
         }
+      } catch (outerError) {
+        console.error('Unexpected auth init error:', outerError);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-    
+
     initAuth();
   }, []);
 
