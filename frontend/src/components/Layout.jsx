@@ -108,8 +108,8 @@ export const Layout = ({ children }) => {
                     data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-mise text-white shadow-sm'
-                        : 'text-foreground/70 hover:text-foreground hover:bg-mise-light'
+                        ? `${item.activeBg} ${item.activeColor} shadow-sm`
+                        : 'text-foreground/70 hover:text-foreground hover:bg-muted'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
