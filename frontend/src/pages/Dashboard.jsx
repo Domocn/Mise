@@ -50,10 +50,10 @@ export const Dashboard = () => {
   };
 
   const quickActions = [
-    { icon: Plus, label: 'Add Recipe', path: '/recipes/new', color: 'bg-mise' },
-    { icon: CalendarDays, label: 'Meal Plan', path: '/meal-planner', color: 'bg-coral' },
-    { icon: ShoppingCart, label: 'Shopping', path: '/shopping', color: 'bg-amber-500' },
-    { icon: Refrigerator, label: 'My Fridge', path: '/fridge', color: 'bg-teal-500' },
+    { icon: Plus, label: 'Add Recipe', path: '/recipes/new', color: 'bg-coral', shadowColor: 'shadow-coral' },
+    { icon: CalendarDays, label: 'Meal Plan', path: '/meal-planner', color: 'bg-mise', shadowColor: 'shadow-card' },
+    { icon: ShoppingCart, label: 'Shopping', path: '/shopping', color: 'bg-tangerine', shadowColor: 'shadow-tangerine' },
+    { icon: Refrigerator, label: 'My Fridge', path: '/fridge', color: 'bg-teal', shadowColor: 'shadow-teal' },
   ];
 
   return (
