@@ -53,76 +53,16 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 # LLM Helpers
 
-# Global GPT4All model instance (lazy loaded)
-_embedded_model = None
-_embedded_model_name = None
-
-def get_embedded_model(model_name: str):
-    """Get or create the embedded GPT4All model instance"""
-    global _embedded_model, _embedded_model_name
-    
-    if _embedded_model is None or _embedded_model_name != model_name:
-        try:
-            from gpt4all import GPT4All
-            import os
-            
-            # Ensure models directory exists
-            models_path = settings.embedded_models_path
-            os.makedirs(models_path, exist_ok=True)
-            
-            logger.info(f"Loading embedded model: {model_name}")
-            _embedded_model = GPT4All(
-                model_name=model_name,
-                model_path=models_path,
-                allow_download=True,
-                verbose=False
-            )
-            _embedded_model_name = model_name
-            logger.info(f"Embedded model loaded successfully")
-        except Exception as e:
-            logger.error(f"Failed to load embedded model: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to load embedded model: {str(e)}")
-    
-    return _embedded_model
-
-
 async def call_embedded(
     system_prompt: str,
     user_prompt: str,
     model_name: str = None
 ) -> str:
-    """Call embedded GPT4All model - runs completely offline"""
-    try:
-        model_name = model_name or settings.embedded_model
-        model = get_embedded_model(model_name)
-        
-        # Combine prompts for the model
-        full_prompt = f"""### System:
-{system_prompt}
-
-### User:
-{user_prompt}
-
-### Assistant:"""
-        
-        # Run in thread pool to not block async
-        import asyncio
-        loop = asyncio.get_event_loop()
-        
-        response = await loop.run_in_executor(
-            None,
-            lambda: model.generate(
-                full_prompt,
-                max_tokens=2000,
-                temp=0.7,
-                top_p=0.9,
-            )
-        )
-        
-        return response.strip()
-    except Exception as e:
-        logger.error(f"Embedded LLM error: {e}")
-        raise HTTPException(status_code=500, detail=f"Embedded AI error: {str(e)}")
+    """Embedded LLM is not available in cloud deployment - use Ollama or cloud providers instead"""
+    raise HTTPException(
+        status_code=503, 
+        detail="Embedded LLM (GPT4All) is not available in cloud deployment. Please configure Ollama, OpenAI, or Anthropic as your LLM provider in Settings."
+    )
 
 
 async def call_openai(
