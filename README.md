@@ -25,13 +25,121 @@ A self-hostable recipe app for families. Organize recipes, plan meals, generate 
 
 ## Quick Start
 
+### Option 1: Docker Compose (Command Line)
+
 ```bash
-git clone https://github.com/Domocn/Recipe-App.git mise
+git clone https://github.com/Domocn/Mise.git mise
 cd mise
 docker-compose up -d
 ```
 
 Open **http://localhost:3000** and create an account.
+
+### Option 2: Portainer
+
+1. Go to **Stacks** → **Add Stack**
+2. Name it `mise`
+3. Choose one of:
+   - **Upload** — Upload the `docker-compose.yml` file
+   - **Repository** — Enter repo URL, set compose path to `docker-compose.yml`
+   - **Web editor** — Paste the docker-compose below
+4. Click **Deploy the stack**
+5. Open **http://your-server:3000**
+
+#### Pull AI Model in Portainer
+
+1. Go to **Containers** → `mise-ollama`
+2. Click **Console** → **Connect**
+3. Run: `ollama pull llama3`
+
+### Docker Compose File
+
+<details>
+<summary>Click to expand docker-compose.yml</summary>
+
+> **Note:** This is the minimal version. The full `docker-compose.yml` in the repo includes OpenPanel analytics if you want usage tracking.
+
+```yaml
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: mise-db
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=mise
+    networks:
+      - mise-network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: mise-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - mise-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mise-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=mise
+      - JWT_SECRET=change-this-to-a-random-string
+      - CORS_ORIGINS=*
+      - LLM_PROVIDER=ollama
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3
+      - EMBEDDED_MODELS_PATH=/app/models
+    volumes:
+      - uploads_data:/app/uploads
+      - models_data:/app/models
+    depends_on:
+      - mongodb
+      - ollama
+    networks:
+      - mise-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_BACKEND_URL=http://localhost:8001
+    container_name: mise-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8001
+    depends_on:
+      - backend
+    networks:
+      - mise-network
+
+volumes:
+  mongodb_data:
+  ollama_data:
+  uploads_data:
+  models_data:
+
+networks:
+  mise-network:
+    driver: bridge
+```
+
+</details>
 
 ## AI Setup
 
@@ -106,6 +214,42 @@ docker-compose up -d
 - **Database:** MongoDB
 - **AI:** OpenAI, Ollama, GPT4All (embedded)
 - **Infrastructure:** Docker, Nginx
+
+## Reverse Proxy (Optional)
+
+If running behind Nginx Proxy Manager, Traefik, or Caddy:
+
+```
+Frontend: your-domain.com → localhost:3000
+Backend API: your-domain.com/api → localhost:8001
+```
+
+Update `REACT_APP_BACKEND_URL` in docker-compose.yml:
+
+```yaml
+environment:
+  - REACT_APP_BACKEND_URL=https://your-domain.com/api
+```
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Can't connect to database | Check if `mise-db` container is running |
+| AI features not working | Ensure Ollama has a model: `docker exec mise-ollama ollama list` |
+| Frontend shows blank page | Check browser console, verify `REACT_APP_BACKEND_URL` |
+| Port already in use | Change ports in docker-compose.yml |
+
+### View Logs
+
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f backend
+docker-compose logs -f frontend
+```
 
 ## License
 
