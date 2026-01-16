@@ -63,15 +63,47 @@ module.exports = {
                                 '4': 'hsl(var(--chart-4))',
                                 '5': 'hsl(var(--chart-5))'
                         },
+                        // Logo-inspired colors
                         mise: {
                                 DEFAULT: '#6C5CE7',
                                 light: '#E8E4FF',
                                 dark: '#5B4CD4',
                         },
+                        // Vibrant yellow from logo ingredients
+                        sunny: {
+                                DEFAULT: '#FFD93D',
+                                light: '#FFF4CC',
+                                dark: '#E6C235',
+                        },
+                        // Coral/Red from logo ingredients
                         coral: {
                                 DEFAULT: '#FF6B6B',
                                 light: '#FFE5E5',
                                 dark: '#E05656',
+                        },
+                        // Teal/Cyan from logo ingredients
+                        teal: {
+                                DEFAULT: '#00D2D3',
+                                light: '#E0FAFA',
+                                dark: '#00B8B9',
+                        },
+                        // Orange from logo ingredients
+                        tangerine: {
+                                DEFAULT: '#FF9F43',
+                                light: '#FFECD9',
+                                dark: '#E68A3A',
+                        },
+                        // Light purple/lavender from logo ingredients
+                        lavender: {
+                                DEFAULT: '#A29BFE',
+                                light: '#F0EEFF',
+                                dark: '#8B83E6',
+                        },
+                        // Green for freshness
+                        fresh: {
+                                DEFAULT: '#26DE81',
+                                light: '#E3FAED',
+                                dark: '#20C572',
                         },
                         cream: {
                                 DEFAULT: '#F8F7FF',
@@ -117,6 +149,10 @@ module.exports = {
                         'soft': '0 2px 8px rgba(0,0,0,0.04)',
                         'hover': '0 8px 24px rgba(0,0,0,0.08)',
                         'card': '0 4px 12px rgba(108,92,231,0.08)',
+                        'sunny': '0 4px 12px rgba(255,217,61,0.25)',
+                        'coral': '0 4px 12px rgba(255,107,107,0.25)',
+                        'teal': '0 4px 12px rgba(0,210,211,0.25)',
+                        'tangerine': '0 4px 12px rgba(255,159,67,0.25)',
                 }
         }
   },
