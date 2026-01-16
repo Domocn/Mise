@@ -57,9 +57,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Don't redirect if we're on login/register pages or if it's a login/register request
+      const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+      const isAuthRequest = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
+
+      if (!isAuthPage && !isAuthRequest) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Use replace to avoid adding to history, and only if not already redirecting
+        if (window.location.pathname !== '/login') {
+          window.location.replace('/login');
+        }
+      }
     }
     return Promise.reject(error);
   }
