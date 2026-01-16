@@ -18,18 +18,33 @@ const getServerUrl = () => {
   return process.env.REACT_APP_BACKEND_URL || '';
 };
 
+// Check if server is configured
+const isServerConfigured = () => {
+  const url = getServerUrl();
+  return url && url.length > 0;
+};
+
 const api = axios.create({
   baseURL: getServerUrl() + '/api',
 });
 
 // Update baseURL when it might have changed
 api.interceptors.request.use((config) => {
+  // Check if server is configured
+  if (!isServerConfigured()) {
+    // Redirect to server config page
+    if (window.location.pathname !== '/server') {
+      window.location.href = '/server';
+    }
+    return Promise.reject(new Error('Server not configured. Please configure your server URL.'));
+  }
+
   // Dynamically update baseURL in case it changed
   const currentUrl = getServerUrl();
   if (currentUrl) {
     config.baseURL = currentUrl + '/api';
   }
-  
+
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
