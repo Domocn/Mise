@@ -139,13 +139,22 @@ async def download_embedded_model(
     try:
         from gpt4all import GPT4All
         import asyncio
-        
+        from pathlib import Path
+
+        # Security: Validate model_name to prevent path traversal
+        if '..' in model_name or '/' in model_name or '\\' in model_name:
+            return {"success": False, "message": "Invalid model name"}
+
+        # Only allow known model file extensions
+        if not model_name.endswith('.gguf'):
+            return {"success": False, "message": "Invalid model format"}
+
         models_path = settings.embedded_models_path
         os.makedirs(models_path, exist_ok=True)
-        
+
         # Check if already downloaded
-        model_file = os.path.join(models_path, model_name)
-        if os.path.exists(model_file):
+        model_file = Path(models_path) / model_name
+        if model_file.exists():
             return {"success": True, "message": "Model already downloaded", "model": model_name}
         
         # Download in background - this will take a while
