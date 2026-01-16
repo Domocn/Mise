@@ -286,8 +286,8 @@ export const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-mise-light flex items-center justify-center mb-4 group-hover:bg-mise group-hover:text-white transition-colors">
-                    <Icon className="w-6 h-6 text-mise group-hover:text-white transition-colors" />
+                  <div className={`w-12 h-12 rounded-xl ${feature.bgColor} flex items-center justify-center mb-4 transition-colors`}>
+                    <Icon className={`w-6 h-6 ${feature.iconColor} transition-colors`} />
                   </div>
                   <h3 className="font-heading font-semibold text-lg mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
