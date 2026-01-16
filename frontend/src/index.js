@@ -23,9 +23,31 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+// Debug: log that React is starting
+console.log('[index.js] React starting...');
+
+// Update the pre-react debug to show React is loading
+const preReactDebug = document.getElementById('pre-react-debug');
+if (preReactDebug) {
+  preReactDebug.style.background = 'purple';
+  preReactDebug.textContent = 'React is mounting...';
+}
+
+try {
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  console.log('[index.js] ReactDOM root created');
+
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  );
+  console.log('[index.js] React render called');
+} catch (error) {
+  console.error('[index.js] React failed to mount:', error);
+  const preReactDebug = document.getElementById('pre-react-debug');
+  if (preReactDebug) {
+    preReactDebug.style.background = 'red';
+    preReactDebug.textContent = 'React FAILED: ' + error.message;
+  }
+}
