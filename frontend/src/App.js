@@ -22,15 +22,15 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md text-center shadow-lg">
-            <h1 className="text-xl font-bold text-gray-900 mb-4">Something went wrong</h1>
-            <p className="text-gray-600 mb-6">
-              The app encountered an error. Please try refreshing the page.
+        <div style={{ minHeight: '100vh', background: 'orange', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '32px', maxWidth: '500px', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'red', marginBottom: '16px' }}>ERROR CAUGHT!</h1>
+            <p style={{ color: '#333', marginBottom: '16px' }}>
+              {this.state.error?.message || 'Unknown error'}
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-mise text-white rounded-full hover:bg-mise-dark transition-colors"
+              style={{ padding: '12px 24px', background: 'blue', color: 'white', borderRadius: '999px', border: 'none', cursor: 'pointer', fontSize: '16px' }}
             >
               Refresh Page
             </button>
@@ -162,6 +162,22 @@ function AppRoutes() {
 function App() {
   return (
     <ErrorBoundary>
+      {/* Debug OUTSIDE AuthProvider - should ALWAYS show if React works */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        background: 'blue',
+        color: 'yellow',
+        padding: '10px',
+        fontSize: '20px',
+        fontWeight: 'bold',
+        zIndex: 2147483647,
+        textAlign: 'center'
+      }}>
+        BLUE BAR = React is working
+      </div>
       <BrowserRouter>
         <AuthProvider>
           <AuthDebug />
