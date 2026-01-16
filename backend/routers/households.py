@@ -66,6 +66,8 @@ async def leave_household(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=400, detail="Not in a household")
 
     household = await db.households.find_one({"id": user["household_id"]}, {"_id": 0})
+    if not household:
+        raise HTTPException(status_code=404, detail="Household not found")
     if household["owner_id"] == user["id"]:
         raise HTTPException(status_code=400, detail="Owner cannot leave. Transfer ownership first.")
 
