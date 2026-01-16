@@ -70,6 +70,8 @@ export const authApi = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/me', data),
+  deleteAccount: () => api.delete('/auth/me'),
 };
 
 // Households
@@ -79,6 +81,9 @@ export const householdApi = {
   getMembers: () => api.get('/households/members'),
   invite: (email) => api.post('/households/invite', { email }),
   leave: () => api.post('/households/leave'),
+  generateJoinCode: () => api.post('/households/join-code'),
+  revokeJoinCode: () => api.delete('/households/join-code'),
+  joinWithCode: (code) => api.post('/households/join', { join_code: code }),
 };
 
 // Recipes

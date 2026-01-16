@@ -11,11 +11,17 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    allergies: Optional[List[str]] = None
+
 class UserResponse(BaseModel):
     id: str
     email: str
     name: str
     household_id: Optional[str] = None
+    allergies: Optional[List[str]] = []
     created_at: str
 
 # Household Models
@@ -31,6 +37,11 @@ class HouseholdResponse(BaseModel):
     owner_id: str
     member_ids: List[str]
     created_at: str
+    join_code: Optional[str] = None
+    join_code_expires: Optional[str] = None
+
+class JoinHouseholdRequest(BaseModel):
+    join_code: str
 
 # Recipe Models
 class Ingredient(BaseModel):
