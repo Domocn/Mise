@@ -387,7 +387,7 @@ export const RecipeDetail = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-sage" />
+          <Loader2 className="w-8 h-8 animate-spin text-mise" />
         </div>
       </Layout>
     );
@@ -495,7 +495,7 @@ export const RecipeDetail = () => {
             <div className="flex flex-wrap gap-6 mb-8 pb-8 border-b border-border/60">
               {totalTime > 0 && (
                 <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-sage" />
+                  <Clock className="w-5 h-5 text-mise" />
                   <div>
                     <p className="text-xs text-muted-foreground">Total Time</p>
                     <p className="font-medium">{formatTime(totalTime)}</p>
@@ -517,13 +517,13 @@ export const RecipeDetail = () => {
               
               {/* Servings with scaling controls */}
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-sage" />
+                <Users className="w-5 h-5 text-mise" />
                 <div>
                   <p className="text-xs text-muted-foreground">Servings</p>
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => handleScaleServings(scaledServings - 1)}
-                      className="w-6 h-6 rounded-full bg-sage-light hover:bg-sage text-sage hover:text-white flex items-center justify-center transition-colors print:hidden"
+                      className="w-6 h-6 rounded-full bg-mise-light hover:bg-mise text-mise hover:text-white flex items-center justify-center transition-colors print:hidden"
                       disabled={scaledServings <= 1}
                     >
                       <Minus className="w-3 h-3" />
@@ -531,7 +531,7 @@ export const RecipeDetail = () => {
                     <span className="font-medium w-8 text-center">{scaledServings}</span>
                     <button 
                       onClick={() => handleScaleServings(scaledServings + 1)}
-                      className="w-6 h-6 rounded-full bg-sage-light hover:bg-sage text-sage hover:text-white flex items-center justify-center transition-colors print:hidden"
+                      className="w-6 h-6 rounded-full bg-mise-light hover:bg-mise text-mise hover:text-white flex items-center justify-center transition-colors print:hidden"
                     >
                       <PlusIcon className="w-3 h-3" />
                     </button>
@@ -590,7 +590,7 @@ export const RecipeDetail = () => {
                     </div>
                     <Button 
                       onClick={handleAddToMealPlan} 
-                      className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                      className="w-full rounded-full bg-mise hover:bg-mise-dark"
                       disabled={addingToMealPlan}
                     >
                       {addingToMealPlan ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add to Plan'}
@@ -630,7 +630,7 @@ export const RecipeDetail = () => {
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <Share2 className="w-5 h-5 text-sage" />
+                    <Share2 className="w-5 h-5 text-mise" />
                     Share Recipe
                   </DialogTitle>
                 </DialogHeader>
@@ -640,10 +640,10 @@ export const RecipeDetail = () => {
                   </p>
                   
                   {/* Recipe Card - Best for messaging */}
-                  <div className="p-4 rounded-xl border border-border/60 hover:border-sage transition-colors">
+                  <div className="p-4 rounded-xl border border-border/60 hover:border-mise transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-terracotta-light flex items-center justify-center flex-shrink-0">
-                        <Image className="w-5 h-5 text-terracotta" />
+                      <div className="w-10 h-10 rounded-lg bg-coral-light flex items-center justify-center flex-shrink-0">
+                        <Image className="w-5 h-5 text-coral" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-sm">Recipe Card</h3>
@@ -654,7 +654,7 @@ export const RecipeDetail = () => {
                           size="sm"
                           onClick={handleDownloadCard}
                           disabled={generatingCard}
-                          className="mt-3 rounded-full bg-terracotta hover:bg-terracotta-dark"
+                          className="mt-3 rounded-full bg-coral hover:bg-coral-dark"
                         >
                           {generatingCard ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -668,10 +668,10 @@ export const RecipeDetail = () => {
                   </div>
 
                   {/* Copy as Text */}
-                  <div className="p-4 rounded-xl border border-border/60 hover:border-sage transition-colors">
+                  <div className="p-4 rounded-xl border border-border/60 hover:border-mise transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-sage-light flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-sage" />
+                      <div className="w-10 h-10 rounded-lg bg-mise-light flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-5 h-5 text-mise" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-sm">Copy as Text</h3>
@@ -696,7 +696,7 @@ export const RecipeDetail = () => {
                   </div>
 
                   {/* Share Link - Only if externally accessible */}
-                  <div className="p-4 rounded-xl border border-border/60 hover:border-sage transition-colors">
+                  <div className="p-4 rounded-xl border border-border/60 hover:border-mise transition-colors">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <LinkIcon className="w-5 h-5 text-blue-600" />
@@ -755,7 +755,7 @@ export const RecipeDetail = () => {
                 {recipe.tags.map((tag, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 rounded-full bg-sage-light text-sage text-sm"
+                    className="px-3 py-1 rounded-full bg-mise-light text-mise text-sm"
                   >
                     {tag}
                   </span>
@@ -766,7 +766,7 @@ export const RecipeDetail = () => {
             {/* Ingredients */}
             <section className="mb-8">
               <h2 className="font-heading text-xl font-semibold mb-4 flex items-center gap-2">
-                <ChefHat className="w-5 h-5 text-sage" />
+                <ChefHat className="w-5 h-5 text-mise" />
                 Ingredients
                 {scaledServings !== recipe.servings && (
                   <span className="text-sm font-normal text-muted-foreground">
@@ -777,7 +777,7 @@ export const RecipeDetail = () => {
               <ul className="space-y-2" data-testid="ingredients-list">
                 {(scaledIngredients || recipe.ingredients).map((ing, idx) => (
                   <li key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-cream-subtle">
-                    <span className="w-2 h-2 rounded-full bg-sage mt-2 flex-shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-mise mt-2 flex-shrink-0" />
                     <span>
                       <span className="font-medium">{ing.amount}</span>
                       {ing.unit && <span className="text-muted-foreground"> {ing.unit}</span>}
@@ -794,7 +794,7 @@ export const RecipeDetail = () => {
               <ol className="space-y-4" data-testid="instructions-list">
                 {recipe.instructions.map((step, idx) => (
                   <li key={idx} className="flex gap-4">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-sage text-white flex items-center justify-center font-semibold text-sm">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-mise text-white flex items-center justify-center font-semibold text-sm">
                       {idx + 1}
                     </span>
                     <p className="pt-1">{step}</p>

@@ -40,8 +40,26 @@ export const Login = () => {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
-            <ChefHat className="w-7 h-7 text-white" />
+          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <rect width="100" height="100" fill="#6C5CE7" />
+              <g stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9">
+                <path d="M35 25 Q32 20 35 15 Q38 10 35 5"/>
+                <path d="M50 22 Q47 17 50 12 Q53 7 50 2"/>
+                <path d="M65 25 Q62 20 65 15 Q68 10 65 5"/>
+              </g>
+              <g fill="#FFFFFF">
+                <rect x="12" y="43" width="10" height="4" rx="2"/>
+                <rect x="78" y="43" width="10" height="4" rx="2"/>
+              </g>
+              <path d="M20 38 L80 38 L80 42 L78 72 C77 78 72 82 65 82 L35 82 C28 82 23 78 22 72 L20 42 Z" fill="#FFFFFF"/>
+              <rect x="18" y="35" width="64" height="8" rx="2" fill="#FFFFFF"/>
+              <circle cx="35" cy="55" r="6" fill="#FFD93D"/>
+              <circle cx="52" cy="50" r="6" fill="#FF6B6B"/>
+              <circle cx="67" cy="55" r="5" fill="#00D2D3"/>
+              <circle cx="42" cy="68" r="5" fill="#FF9F43"/>
+              <circle cx="58" cy="65" r="4" fill="#A29BFE"/>
+            </svg>
           </div>
           <span className="font-heading font-bold text-2xl">Mise</span>
         </Link>
@@ -64,7 +82,7 @@ export const Login = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="login-email"
                 />
@@ -81,7 +99,7 @@ export const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="login-password"
                 />
@@ -90,7 +108,7 @@ export const Login = () => {
 
             <Button 
               type="submit" 
-              className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+              className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
               disabled={loading}
               data-testid="login-submit"
             >
@@ -107,7 +125,7 @@ export const Login = () => {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-sage hover:underline font-medium">
+            <Link to="/register" className="text-mise hover:underline font-medium">
               Sign up
             </Link>
           </p>
@@ -150,8 +168,26 @@ export const Register = () => {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
-            <ChefHat className="w-7 h-7 text-white" />
+          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <rect width="100" height="100" fill="#6C5CE7" />
+              <g stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9">
+                <path d="M35 25 Q32 20 35 15 Q38 10 35 5"/>
+                <path d="M50 22 Q47 17 50 12 Q53 7 50 2"/>
+                <path d="M65 25 Q62 20 65 15 Q68 10 65 5"/>
+              </g>
+              <g fill="#FFFFFF">
+                <rect x="12" y="43" width="10" height="4" rx="2"/>
+                <rect x="78" y="43" width="10" height="4" rx="2"/>
+              </g>
+              <path d="M20 38 L80 38 L80 42 L78 72 C77 78 72 82 65 82 L35 82 C28 82 23 78 22 72 L20 42 Z" fill="#FFFFFF"/>
+              <rect x="18" y="35" width="64" height="8" rx="2" fill="#FFFFFF"/>
+              <circle cx="35" cy="55" r="6" fill="#FFD93D"/>
+              <circle cx="52" cy="50" r="6" fill="#FF6B6B"/>
+              <circle cx="67" cy="55" r="5" fill="#00D2D3"/>
+              <circle cx="42" cy="68" r="5" fill="#FF9F43"/>
+              <circle cx="58" cy="65" r="4" fill="#A29BFE"/>
+            </svg>
           </div>
           <span className="font-heading font-bold text-2xl">Mise</span>
         </Link>
@@ -174,7 +210,7 @@ export const Register = () => {
                   placeholder="Your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="register-name"
                 />
@@ -191,7 +227,7 @@ export const Register = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   data-testid="register-email"
                 />
@@ -208,7 +244,7 @@ export const Register = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-sage"
+                  className="pl-10 rounded-xl bg-cream-subtle border-transparent focus:border-mise"
                   required
                   minLength={6}
                   data-testid="register-password"
@@ -218,7 +254,7 @@ export const Register = () => {
 
             <Button 
               type="submit" 
-              className="w-full rounded-full bg-sage hover:bg-sage-dark h-12"
+              className="w-full rounded-full bg-mise hover:bg-mise-dark h-12"
               disabled={loading}
               data-testid="register-submit"
             >
@@ -235,7 +271,7 @@ export const Register = () => {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-sage hover:underline font-medium">
+            <Link to="/login" className="text-mise hover:underline font-medium">
               Sign in
             </Link>
           </p>

@@ -34,12 +34,12 @@ module.exports = {
                         primary: {
                                 DEFAULT: 'hsl(var(--primary))',
                                 foreground: 'hsl(var(--primary-foreground))',
-                                light: '#E8F0E6',
+                                light: '#E8E4FF',
                         },
                         secondary: {
                                 DEFAULT: 'hsl(var(--secondary))',
                                 foreground: 'hsl(var(--secondary-foreground))',
-                                light: '#FCECE8',
+                                light: '#FFE5E5',
                         },
                         muted: {
                                 DEFAULT: 'hsl(var(--muted))',
@@ -63,20 +63,20 @@ module.exports = {
                                 '4': 'hsl(var(--chart-4))',
                                 '5': 'hsl(var(--chart-5))'
                         },
-                        sage: {
-                                DEFAULT: '#4A6741',
-                                light: '#E8F0E6',
-                                dark: '#3A5233',
+                        mise: {
+                                DEFAULT: '#6C5CE7',
+                                light: '#E8E4FF',
+                                dark: '#5B4CD4',
                         },
-                        terracotta: {
-                                DEFAULT: '#E07A5F',
-                                light: '#FCECE8',
-                                dark: '#D0694E',
+                        coral: {
+                                DEFAULT: '#FF6B6B',
+                                light: '#FFE5E5',
+                                dark: '#E05656',
                         },
                         cream: {
-                                DEFAULT: '#FDFBF7',
+                                DEFAULT: '#F8F7FF',
                                 paper: '#FFFFFF',
-                                subtle: '#F5F2EB',
+                                subtle: '#F0EFFF',
                         },
                 },
                 keyframes: {
@@ -106,7 +106,7 @@ module.exports = {
                 boxShadow: {
                         'soft': '0 2px 8px rgba(0,0,0,0.04)',
                         'hover': '0 8px 24px rgba(0,0,0,0.08)',
-                        'card': '0 4px 12px rgba(74,103,65,0.08)',
+                        'card': '0 4px 12px rgba(108,92,231,0.08)',
                 }
         }
   },

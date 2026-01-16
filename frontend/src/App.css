@@ -1,4 +1,4 @@
-/* Kitchenry App Styles */
+/* Mise App Styles */
 
 /* Recipe card hover effects */
 .recipe-card {
@@ -33,7 +33,7 @@
 }
 
 .input-focus:focus {
-    @apply ring-2 ring-sage ring-offset-2;
+    @apply ring-2 ring-mise ring-offset-2;
 }
 
 /* Category pills */
@@ -42,11 +42,11 @@
 }
 
 .category-pill.active {
-    @apply bg-sage text-white;
+    @apply bg-mise text-white;
 }
 
 .category-pill:not(.active) {
-    @apply bg-cream-subtle text-foreground hover:bg-sage-light;
+    @apply bg-cream-subtle text-foreground hover:bg-mise-light;
 }
 
 /* Meal plan card */
@@ -60,7 +60,7 @@
 }
 
 .shopping-item.checked {
-    @apply bg-sage-light/50 line-through text-muted-foreground;
+    @apply bg-mise-light/50 line-through text-muted-foreground;
 }
 
 /* Loading skeleton */
@@ -75,7 +75,7 @@
 
 /* Toast styling */
 .toast-success {
-    @apply bg-sage text-white;
+    @apply bg-mise text-white;
 }
 
 .toast-error {
@@ -88,13 +88,13 @@
 }
 
 .nav-link.active::after {
-    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-sage rounded-full;
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-mise rounded-full;
     content: '';
 }
 
 /* Hero pattern */
 .hero-pattern {
-    background-image: radial-gradient(circle at 1px 1px, #4A6741 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, #6C5CE7 1px, transparent 0);
     background-size: 40px 40px;
     opacity: 0.03;
 }
@@ -106,11 +106,11 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
-    
+
     /* Hide non-essential elements */
-    nav, 
+    nav,
     header,
-    .print\\:hidden,
+    .print\:hidden,
     button:not([data-print]),
     [data-testid="favorite-btn"],
     [data-testid="print-btn"],
@@ -121,56 +121,56 @@
     [data-testid="delete-recipe-btn"] {
         display: none !important;
     }
-    
+
     /* Reset layout */
     .max-w-4xl {
         max-width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
     }
-    
+
     /* Style recipe card for print */
     article {
         border: none !important;
         box-shadow: none !important;
     }
-    
+
     /* Make text black for better printing */
     h1, h2, h3, p, li, span {
         color: black !important;
     }
-    
+
     /* Recipe title */
     h1 {
         font-size: 24pt !important;
         margin-bottom: 10pt !important;
     }
-    
+
     h2 {
         font-size: 16pt !important;
         margin-top: 16pt !important;
         margin-bottom: 8pt !important;
         page-break-after: avoid;
     }
-    
+
     /* Ingredients and instructions */
     ul, ol {
         page-break-inside: avoid;
     }
-    
+
     li {
         padding: 4pt 0 !important;
         background: none !important;
     }
-    
+
     /* Hide hero image for faster printing (optional) */
     .aspect-video {
         max-height: 200px !important;
     }
-    
-    /* Add Kitchenry branding */
+
+    /* Add Mise branding */
     article::after {
-        content: "Printed from Kitchenry";
+        content: "Printed from Mise";
         display: block;
         text-align: center;
         font-size: 10pt;

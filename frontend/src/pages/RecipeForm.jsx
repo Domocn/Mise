@@ -189,7 +189,7 @@ export const RecipeForm = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-sage" />
+          <Loader2 className="w-8 h-8 animate-spin text-mise" />
         </div>
       </Layout>
     );
@@ -221,7 +221,7 @@ export const RecipeForm = () => {
             <div>
               <Label className="mb-2 block">Recipe Image</Label>
               <div 
-                className="relative aspect-video rounded-xl border-2 border-dashed border-border bg-cream-subtle overflow-hidden cursor-pointer hover:border-sage transition-colors"
+                className="relative aspect-video rounded-xl border-2 border-dashed border-border bg-cream-subtle overflow-hidden cursor-pointer hover:border-mise transition-colors"
                 onClick={() => isEditing && fileInputRef.current?.click()}
               >
                 {imageUrl ? (
@@ -238,7 +238,7 @@ export const RecipeForm = () => {
                 )}
                 {uploadingImage && (
                   <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-sage" />
+                    <Loader2 className="w-8 h-8 animate-spin text-mise" />
                   </div>
                 )}
               </div>
@@ -415,7 +415,7 @@ export const RecipeForm = () => {
               <div className="space-y-3" data-testid="instructions-inputs">
                 {instructions.map((step, idx) => (
                   <div key={idx} className="flex gap-3 items-start">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-sage text-white flex items-center justify-center font-semibold text-sm mt-1">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-mise text-white flex items-center justify-center font-semibold text-sm mt-1">
                       {idx + 1}
                     </span>
                     <Textarea
@@ -443,7 +443,7 @@ export const RecipeForm = () => {
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
-                className="rounded-full bg-sage hover:bg-sage-dark px-8"
+                className="rounded-full bg-mise hover:bg-mise-dark px-8"
                 disabled={saving}
                 data-testid="save-recipe-btn"
               >

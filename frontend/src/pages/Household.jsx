@@ -132,7 +132,7 @@ export const Household = () => {
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-sage" />
+            <Loader2 className="w-8 h-8 animate-spin text-mise" />
           </div>
         ) : !household ? (
           /* No Household */
@@ -141,8 +141,8 @@ export const Household = () => {
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl border border-border/60 p-8 text-center"
           >
-            <div className="w-16 h-16 rounded-full bg-sage-light mx-auto mb-4 flex items-center justify-center">
-              <Home className="w-8 h-8 text-sage" />
+            <div className="w-16 h-16 rounded-full bg-mise-light mx-auto mb-4 flex items-center justify-center">
+              <Home className="w-8 h-8 text-mise" />
             </div>
             <h3 className="font-heading text-lg font-semibold mb-2">No Household Yet</h3>
             <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
@@ -151,7 +151,7 @@ export const Household = () => {
             
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
-                <Button className="rounded-full bg-sage hover:bg-sage-dark" data-testid="create-household-btn">
+                <Button className="rounded-full bg-mise hover:bg-mise-dark" data-testid="create-household-btn">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Household
                 </Button>
@@ -173,7 +173,7 @@ export const Household = () => {
                   </div>
                   <Button 
                     onClick={handleCreateHousehold}
-                    className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                    className="w-full rounded-full bg-mise hover:bg-mise-dark"
                     disabled={creating || !householdName.trim()}
                   >
                     {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -194,7 +194,7 @@ export const Household = () => {
             <div className="bg-white rounded-2xl border border-border/60 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-sage flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-xl bg-mise flex items-center justify-center">
                     <Home className="w-7 h-7 text-white" />
                   </div>
                   <div>
@@ -207,7 +207,7 @@ export const Household = () => {
                 
                 <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
                   <DialogTrigger asChild>
-                    <Button className="rounded-full bg-sage hover:bg-sage-dark" data-testid="invite-member-btn">
+                    <Button className="rounded-full bg-mise hover:bg-mise-dark" data-testid="invite-member-btn">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Invite
                     </Button>
@@ -236,7 +236,7 @@ export const Household = () => {
                       </div>
                       <Button 
                         onClick={handleInvite}
-                        className="w-full rounded-full bg-sage hover:bg-sage-dark"
+                        className="w-full rounded-full bg-mise hover:bg-mise-dark"
                         disabled={inviting || !inviteEmail.trim()}
                       >
                         {inviting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -258,7 +258,7 @@ export const Household = () => {
                     className="flex items-center gap-3 p-3 rounded-xl bg-cream-subtle"
                   >
                     <Avatar>
-                      <AvatarFallback className="bg-sage text-white">
+                      <AvatarFallback className="bg-mise text-white">
                         {getInitials(member.name)}
                       </AvatarFallback>
                     </Avatar>

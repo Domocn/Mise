@@ -105,8 +105,8 @@ export const Layout = ({ children }) => {
                     data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-sage text-white shadow-sm'
-                        : 'text-foreground/70 hover:text-foreground hover:bg-sage-light'
+                        ? 'bg-mise text-white shadow-sm'
+                        : 'text-foreground/70 hover:text-foreground hover:bg-mise-light'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -121,9 +121,9 @@ export const Layout = ({ children }) => {
               {/* Add Recipe Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    size="sm"
-                    className="rounded-full bg-sage hover:bg-sage-dark shadow-sm h-8 px-3"
+                  <Button 
+                    size="sm" 
+                    className="rounded-full bg-mise hover:bg-mise-dark shadow-sm"
                     data-testid="add-recipe-trigger"
                   >
                     <Plus className="w-4 h-4" />
@@ -149,13 +149,13 @@ export const Layout = ({ children }) => {
               {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full w-9 h-9 bg-terracotta/90 hover:bg-terracotta text-white font-medium text-sm"
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="rounded-full w-10 h-10 bg-mise-light"
                     data-testid="user-menu-trigger"
                   >
-                    {getInitials(user?.name)}
+                    <User className="w-5 h-5 text-mise" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-0">
@@ -163,6 +163,9 @@ export const Layout = ({ children }) => {
                   <div className="px-4 py-3 border-b border-border/60">
                     <p className="font-semibold text-sm">{user?.name}</p>
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    {household && (
+                      <p className="text-xs text-mise mt-1">{household.name}</p>
+                    )}
                   </div>
 
                   <div className="py-1">
@@ -226,8 +229,8 @@ export const Layout = ({ children }) => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-                    isActive ? 'text-sage' : 'text-muted-foreground'
+                  className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+                    isActive ? 'text-mise' : 'text-muted-foreground'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

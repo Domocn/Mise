@@ -50,8 +50,8 @@ export const Dashboard = () => {
   };
 
   const quickActions = [
-    { icon: Plus, label: 'Add Recipe', path: '/recipes/new', color: 'bg-sage' },
-    { icon: CalendarDays, label: 'Meal Plan', path: '/meal-planner', color: 'bg-terracotta' },
+    { icon: Plus, label: 'Add Recipe', path: '/recipes/new', color: 'bg-mise' },
+    { icon: CalendarDays, label: 'Meal Plan', path: '/meal-planner', color: 'bg-coral' },
     { icon: ShoppingCart, label: 'Shopping', path: '/shopping', color: 'bg-amber-500' },
     { icon: Refrigerator, label: 'My Fridge', path: '/fridge', color: 'bg-teal-500' },
   ];
@@ -75,7 +75,7 @@ export const Dashboard = () => {
               </p>
             </div>
             <Link to="/recipes/new">
-              <Button className="rounded-full bg-sage hover:bg-sage-dark shadow-sm" data-testid="dashboard-add-recipe">
+              <Button className="rounded-full bg-mise hover:bg-mise-dark shadow-sm" data-testid="dashboard-add-recipe">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Recipe
               </Button>
@@ -122,7 +122,7 @@ export const Dashboard = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-heading text-xl font-semibold">This Week's Meals</h2>
-            <Link to="/meal-planner" className="text-sage hover:text-sage-dark text-sm font-medium flex items-center gap-1">
+            <Link to="/meal-planner" className="text-mise hover:text-mise-dark text-sm font-medium flex items-center gap-1">
               View All
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -144,7 +144,7 @@ export const Dashboard = () => {
                 <div key={plan.id} className="bg-white rounded-xl border border-border/60 p-4 shadow-soft">
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">{plan.meal_type}</p>
                   <p className="font-medium mt-1 line-clamp-1">{plan.recipe_title}</p>
-                  <p className="text-sm text-sage mt-2">{format(new Date(plan.date), 'EEE, MMM d')}</p>
+                  <p className="text-sm text-mise mt-2">{format(new Date(plan.date), 'EEE, MMM d')}</p>
                 </div>
               ))}
             </div>
@@ -159,7 +159,7 @@ export const Dashboard = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-heading text-xl font-semibold">Recent Recipes</h2>
-            <Link to="/recipes" className="text-sage hover:text-sage-dark text-sm font-medium flex items-center gap-1">
+            <Link to="/recipes" className="text-mise hover:text-mise-dark text-sm font-medium flex items-center gap-1">
               View All
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -178,7 +178,7 @@ export const Dashboard = () => {
               <p className="text-muted-foreground mb-6">Start building your recipe collection!</p>
               <div className="flex justify-center gap-3 flex-wrap">
                 <Link to="/recipes/new">
-                  <Button className="rounded-full bg-sage hover:bg-sage-dark">
+                  <Button className="rounded-full bg-mise hover:bg-mise-dark">
                     <Plus className="w-4 h-4 mr-2" />
                     Create Recipe
                   </Button>

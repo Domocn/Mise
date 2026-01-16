@@ -73,7 +73,7 @@ export const InstallPrompt = () => {
       </button>
       
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-mise flex items-center justify-center flex-shrink-0">
           <Download className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
@@ -84,7 +84,7 @@ export const InstallPrompt = () => {
           <Button 
             onClick={handleInstall}
             size="sm"
-            className="mt-3 rounded-full bg-sage hover:bg-sage-dark text-xs h-8"
+            className="mt-3 rounded-full bg-mise hover:bg-mise-dark text-xs h-8"
             data-testid="install-pwa-btn"
           >
             Install App

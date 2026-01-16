@@ -629,8 +629,8 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <User className="w-5 h-5 text-sage" />
-              Profile
+              <User className="w-5 h-5 text-mise" />
+              Account
             </h2>
           </div>
 
@@ -751,7 +751,7 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <Palette className="w-5 h-5 text-sage" />
+              <Palette className="w-5 h-5 text-mise" />
               Appearance
             </h2>
           </div>
@@ -760,7 +760,7 @@ export const Settings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {darkMode ? (
-                  <Moon className="w-5 h-5 text-sage" />
+                  <Moon className="w-5 h-5 text-mise" />
                 ) : (
                   <Sun className="w-5 h-5 text-amber-500" />
                 )}
@@ -901,7 +901,7 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-sage" />
+              <Sparkles className="w-5 h-5 text-mise" />
               AI Settings
             </h2>
           </div>
@@ -915,12 +915,12 @@ export const Settings = () => {
                   onClick={() => setLlmSettings({ ...llmSettings, provider: 'openai' })}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     llmSettings.provider === 'openai'
-                      ? 'border-sage bg-sage-light'
-                      : 'border-border/60 hover:border-sage'
+                      ? 'border-mise bg-mise-light'
+                      : 'border-border/60 hover:border-mise'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center gap-2">
-                    <Cloud className={`w-6 h-6 ${llmSettings.provider === 'openai' ? 'text-sage' : 'text-muted-foreground'}`} />
+                    <Cloud className={`w-6 h-6 ${llmSettings.provider === 'openai' ? 'text-mise' : 'text-muted-foreground'}`} />
                     <div>
                       <p className="font-medium text-sm">OpenAI</p>
                       <p className="text-xs text-muted-foreground">GPT-4o</p>
@@ -932,12 +932,12 @@ export const Settings = () => {
                   onClick={() => setLlmSettings({ ...llmSettings, provider: 'anthropic' })}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     llmSettings.provider === 'anthropic'
-                      ? 'border-sage bg-sage-light'
-                      : 'border-border/60 hover:border-sage'
+                      ? 'border-mise bg-mise-light'
+                      : 'border-border/60 hover:border-mise'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center gap-2">
-                    <Sparkles className={`w-6 h-6 ${llmSettings.provider === 'anthropic' ? 'text-sage' : 'text-muted-foreground'}`} />
+                    <Sparkles className={`w-6 h-6 ${llmSettings.provider === 'anthropic' ? 'text-mise' : 'text-muted-foreground'}`} />
                     <div>
                       <p className="font-medium text-sm">Claude</p>
                       <p className="text-xs text-muted-foreground">Anthropic</p>
@@ -949,12 +949,12 @@ export const Settings = () => {
                   onClick={() => setLlmSettings({ ...llmSettings, provider: 'ollama' })}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     llmSettings.provider === 'ollama'
-                      ? 'border-sage bg-sage-light'
-                      : 'border-border/60 hover:border-sage'
+                      ? 'border-mise bg-mise-light'
+                      : 'border-border/60 hover:border-mise'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center gap-2">
-                    <HardDrive className={`w-6 h-6 ${llmSettings.provider === 'ollama' ? 'text-sage' : 'text-muted-foreground'}`} />
+                    <HardDrive className={`w-6 h-6 ${llmSettings.provider === 'ollama' ? 'text-mise' : 'text-muted-foreground'}`} />
                     <div>
                       <p className="font-medium text-sm">Ollama</p>
                       <p className="text-xs text-muted-foreground">Local Server</p>
@@ -966,12 +966,12 @@ export const Settings = () => {
                   onClick={() => setLlmSettings({ ...llmSettings, provider: 'embedded' })}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     llmSettings.provider === 'embedded'
-                      ? 'border-sage bg-sage-light'
-                      : 'border-border/60 hover:border-sage'
+                      ? 'border-mise bg-mise-light'
+                      : 'border-border/60 hover:border-mise'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center gap-2">
-                    <WifiOff className={`w-6 h-6 ${llmSettings.provider === 'embedded' ? 'text-sage' : 'text-muted-foreground'}`} />
+                    <WifiOff className={`w-6 h-6 ${llmSettings.provider === 'embedded' ? 'text-mise' : 'text-muted-foreground'}`} />
                     <div>
                       <p className="font-medium text-sm">Embedded</p>
                       <p className="text-xs text-muted-foreground">100% Offline</p>
@@ -1004,7 +1004,7 @@ export const Settings = () => {
                       href="https://console.anthropic.com/settings/keys" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-sage hover:underline"
+                      className="text-mise hover:underline"
                     >
                       console.anthropic.com
                     </a>
@@ -1075,7 +1075,7 @@ export const Settings = () => {
                   
                   {llmTestResult && (
                     <div className={`mt-3 p-3 rounded-lg flex items-center gap-2 ${
-                      llmTestResult.success ? 'bg-sage-light text-sage' : 'bg-red-50 text-red-600'
+                      llmTestResult.success ? 'bg-mise-light text-mise' : 'bg-red-50 text-red-600'
                     }`}>
                       {llmTestResult.success ? (
                         <Check className="w-4 h-4" />
@@ -1148,7 +1148,7 @@ export const Settings = () => {
                   
                   {llmTestResult && (
                     <div className={`mt-3 p-3 rounded-lg flex items-center gap-2 ${
-                      llmTestResult.success ? 'bg-sage-light text-sage' : 'bg-red-50 text-red-600'
+                      llmTestResult.success ? 'bg-mise-light text-mise' : 'bg-red-50 text-red-600'
                     }`}>
                       {llmTestResult.success ? (
                         <Check className="w-4 h-4" />
@@ -1175,7 +1175,7 @@ export const Settings = () => {
             <Button
               onClick={handleSaveLlm}
               disabled={savingLlm}
-              className="rounded-full bg-sage hover:bg-sage-dark"
+              className="rounded-full bg-mise hover:bg-mise-dark"
             >
               {savingLlm ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -1301,7 +1301,7 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <Bell className="w-5 h-5 text-sage" />
+              <Bell className="w-5 h-5 text-mise" />
               Notifications
             </h2>
           </div>
@@ -1311,7 +1311,7 @@ export const Settings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {notificationSettings.enabled ? (
-                  <Bell className="w-5 h-5 text-sage" />
+                  <Bell className="w-5 h-5 text-mise" />
                 ) : (
                   <BellOff className="w-5 h-5 text-muted-foreground" />
                 )}
@@ -1350,7 +1350,7 @@ export const Settings = () => {
                 <Button 
                   onClick={handleEnableNotifications}
                   disabled={subscribing}
-                  className="rounded-full bg-sage hover:bg-sage-dark"
+                  className="rounded-full bg-mise hover:bg-mise-dark"
                 >
                   {subscribing ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -1450,7 +1450,7 @@ export const Settings = () => {
                 <Button 
                   onClick={handleSaveNotificationSettings}
                   disabled={savingNotifications}
-                  className="rounded-full bg-sage hover:bg-sage-dark mt-4"
+                  className="rounded-full bg-mise hover:bg-mise-dark mt-4"
                 >
                   {savingNotifications ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -1490,7 +1490,7 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <Server className="w-5 h-5 text-sage" />
+              <Server className="w-5 h-5 text-mise" />
               Server Connection
             </h2>
           </div>
@@ -1501,9 +1501,9 @@ export const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {isLocalServer ? (
-                    <Wifi className="w-5 h-5 text-sage" />
+                    <Wifi className="w-5 h-5 text-mise" />
                   ) : (
-                    <Globe className="w-5 h-5 text-sage" />
+                    <Globe className="w-5 h-5 text-mise" />
                   )}
                   <div>
                     <p className="font-medium text-sm">
@@ -1769,7 +1769,7 @@ export const Settings = () => {
         >
           <div className="p-4 border-b border-border/60 bg-cream-subtle">
             <h2 className="font-heading font-semibold flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-sage" />
+              <MessageSquare className="w-5 h-5 text-mise" />
               Feedback & Support
             </h2>
           </div>
@@ -1782,7 +1782,7 @@ export const Settings = () => {
               className="p-4 flex items-center justify-between hover:bg-cream-subtle transition-colors block"
             >
               <div className="flex items-center gap-3">
-                <Bug className="w-5 h-5 text-terracotta" />
+                <Bug className="w-5 h-5 text-coral" />
                 <div>
                   <p className="font-medium text-sm">Report a Bug</p>
                   <p className="text-xs text-muted-foreground">Found something broken? Let us know on GitHub</p>
@@ -1814,7 +1814,7 @@ export const Settings = () => {
               className="p-4 flex items-center justify-between hover:bg-cream-subtle transition-colors block"
             >
               <div className="flex items-center gap-3">
-                <MessageSquare className="w-5 h-5 text-sage" />
+                <MessageSquare className="w-5 h-5 text-mise" />
                 <div>
                   <p className="font-medium text-sm">Community Discussions</p>
                   <p className="text-xs text-muted-foreground">Ask questions and share tips</p>
