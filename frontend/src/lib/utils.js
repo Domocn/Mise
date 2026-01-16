@@ -25,7 +25,9 @@ export function formatDate(dateString) {
 export function getImageUrl(url) {
   if (!url) return 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=800&q=80';
   if (url.startsWith('http')) return url;
-  return `${process.env.REACT_APP_BACKEND_URL}${url}`;
+  // Use dynamic server URL from localStorage (same logic as api.js)
+  const serverUrl = localStorage.getItem('mise_server_url') || process.env.REACT_APP_BACKEND_URL || '';
+  return `${serverUrl}${url}`;
 }
 
 export const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
