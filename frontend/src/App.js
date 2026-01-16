@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { InstallPrompt } from './components/InstallPrompt';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Pages
 import { Landing } from './pages/Landing';
@@ -95,23 +96,25 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-        <InstallPrompt />
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#FFFFFF',
-              border: '1px solid #E6E2D6',
-              borderRadius: '1rem',
-            },
-            className: 'font-sans',
-          }}
-        />
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+          <InstallPrompt />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: '#FFFFFF',
+                border: '1px solid #E6E2D6',
+                borderRadius: '1rem',
+              },
+              className: 'font-sans',
+            }}
+          />
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
