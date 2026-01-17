@@ -1,0 +1,38 @@
+# Combined Frontend + Backend Dockerfile
+# Stage 1: Build Frontend
+FROM node:20-alpine AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Backend + Frontend serving
+FROM python:3.11-slim
+
+# Install nginx and supervisor
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup backend
+WORKDIR /app/backend
+COPY backend/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ ./
+
+# Copy frontend build to nginx
+COPY --from=frontend-build /app/frontend/build /usr/share/nginx/html
+
+# Copy nginx and supervisor configs
+COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+COPY docker/supervisor/mise.conf /etc/supervisor/conf.d/mise.conf
+
+# Create upload directory
+RUN mkdir -p /app/uploads /app/models
+
+EXPOSE 80
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

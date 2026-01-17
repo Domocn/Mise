@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+<<<<<<< HEAD
+  mise:
+    image: domocn/mise:latest
+    container_name: mise-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+=======
+  frontend:
+    build: ./frontend
+    container_name: mise-frontend
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    environment:
+      - REACT_APP_BACKEND_URL=http://192.168.1.224:8001
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: mise-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+>>>>>>> eeb2f0a8096c3f307ab184e32aaec8451355d15a
+    volumes:
+      - mise_uploads:/app/uploads
+      - mise_models:/app/models
+    environment:
+<<<<<<< HEAD
+      # Core settings (required)
+      DATABASE_URL: mongodb://db:27017/mise
+      JWT_SECRET: <32-byte-secret>  # Generate with: openssl rand -base64 32
+
+      # ─────────────────────────────────────────────────────────────────────────
+      # AI CONFIGURATION (choose one)
+      # ─────────────────────────────────────────────────────────────────────────
+      
+      # Option 1: Embedded AI (100% offline, no setup needed)
+      # Models download automatically on first use
+      LLM_PROVIDER: embedded
+      # EMBEDDED_MODEL: Phi-3-mini-4k-instruct.Q4_0.gguf  # Default, 2.2GB, 4GB RAM
+      # EMBEDDED_MODEL: Llama-3.2-3B-Instruct-Q4_0.gguf  # 2.0GB, 4GB RAM
+      # EMBEDDED_MODEL: Mistral-7B-Instruct-v0.3.Q4_0.gguf  # 4.4GB, 8GB RAM
+
+      # Option 2: Ollama (faster, requires ollama service below)
+      # LLM_PROVIDER: ollama
+      # OLLAMA_URL: http://ollama:11434
+      # OLLAMA_MODEL: llama3
+
+      # Option 3: OpenAI (cloud, requires API key)
+      # LLM_PROVIDER: openai
+      # OPENAI_API_KEY: sk-your-api-key-here
+
+=======
+      MONGO_URL: mongodb://db:27017
+      DB_NAME: mise
+      JWT_SECRET: change-me-to-a-secure-secret
+      CORS_ORIGINS: "*"
+      LLM_PROVIDER: embedded
+>>>>>>> eeb2f0a8096c3f307ab184e32aaec8451355d15a
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - db
+
+  db:
+    image: mongo:7
+    container_name: mise-db
+    restart: unless-stopped
+    volumes:
+      - mise_db:/data/db
+
+<<<<<<< HEAD
+  # ─────────────────────────────────────────────────────────────────────────
+  # OPTIONAL: Ollama for faster local AI (uncomment if using LLM_PROVIDER: ollama)
+  # ─────────────────────────────────────────────────────────────────────────
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: mise-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - mise_ollama:/root/.ollama
+  #   # Uncomment for NVIDIA GPU support:
+  #   # deploy:
+  #   #   resources:
+  #   #     reservations:
+  #   #       devices:
+  #   #         - driver: nvidia
+  #   #           count: 1
+  #   #           capabilities: [gpu]
+
+=======
+>>>>>>> eeb2f0a8096c3f307ab184e32aaec8451355d15a
+volumes:
+  mise_db:
+  mise_uploads:
+  mise_models:

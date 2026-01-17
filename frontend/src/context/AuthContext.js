@@ -1,0 +1,130 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi, householdApi } from '../lib/api';
+
+const AuthContext = createContext(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [household, setHousehold] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      console.log('[AuthContext] initAuth started');
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      console.log('[AuthContext] token exists:', !!token, 'savedUser exists:', !!savedUser);
+
+      if (token && savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          console.log('[AuthContext] Setting user from localStorage:', parsedUser?.email);
+          setUser(parsedUser);
+          console.log('[AuthContext] Calling authApi.me()...');
+          const res = await authApi.me();
+          console.log('[AuthContext] authApi.me() succeeded:', res.data?.email);
+          setUser(res.data);
+          localStorage.setItem('user', JSON.stringify(res.data));
+          
+          // Fetch household - wrap in separate try-catch to not logout on failure
+          if (res.data.household_id) {
+            try {
+              const hRes = await householdApi.getMy();
+              setHousehold(hRes.data);
+            } catch (householdError) {
+              console.error('Failed to fetch household during init:', householdError);
+              // Don't logout if household fetch fails
+            }
+          }
+        } catch (error) {
+          console.error('[AuthContext] Auth init error:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+          setHousehold(null);
+        }
+      }
+      console.log('[AuthContext] Setting loading to false');
+      setLoading(false);
+    };
+
+    initAuth();
+  }, []);
+
+  const login = async (email, password) => {
+    const res = await authApi.login({ email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    
+    if (res.data.user.household_id) {
+      try {
+        const hRes = await householdApi.getMy();
+        setHousehold(hRes.data);
+      } catch (error) {
+        console.error('Failed to fetch household:', error);
+        // Don't block login if household fetch fails
+      }
+    }
+
+    return res.data;
+  };
+
+  const register = async (name, email, password) => {
+    const res = await authApi.register({ name, email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    return res.data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setHousehold(null);
+  };
+
+  const refreshHousehold = async () => {
+    if (user?.household_id) {
+      try {
+        const hRes = await householdApi.getMy();
+        setHousehold(hRes.data);
+      } catch (error) {
+        console.error('Failed to refresh household:', error);
+        setHousehold(null);
+      }
+    } else {
+      setHousehold(null);
+    }
+  };
+
+  const updateUser = (newUser) => {
+    setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
+  };
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      household,
+      loading,
+      login,
+      register,
+      logout,
+      refreshHousehold,
+      updateUser,
+      isAuthenticated: !!user,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
