@@ -12,10 +12,10 @@ RUN npm ci --legacy-peer-deps
 # Copy source
 COPY . .
 
-# Build argument for backend URL - use placeholder for runtime injection
-# The actual URL will be injected by docker-entrypoint.sh at container startup
+# Build argument for backend URL
+# Can be set at build time, or will use placeholder for runtime injection
 ARG REACT_APP_BACKEND_URL=%REACT_APP_BACKEND_URL%
-ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Build the app
 RUN npm run build
