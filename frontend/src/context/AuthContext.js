@@ -1,0 +1,106 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi, householdApi } from '../lib/api';
+
+const AuthContext = createContext(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [household, setHousehold] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      
+      if (token && savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+          const res = await authApi.me();
+          setUser(res.data);
+          localStorage.setItem('user', JSON.stringify(res.data));
+          
+          // Fetch household
+          if (res.data.household_id) {
+            const hRes = await householdApi.getMy();
+            setHousehold(hRes.data);
+          }
+        } catch (error) {
+          console.error('Auth init error:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      }
+      setLoading(false);
+    };
+    
+    initAuth();
+  }, []);
+
+  const login = async (email, password) => {
+    const res = await authApi.login({ email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    
+    if (res.data.user.household_id) {
+      const hRes = await householdApi.getMy();
+      setHousehold(hRes.data);
+    }
+    
+    return res.data;
+  };
+
+  const register = async (name, email, password) => {
+    const res = await authApi.register({ name, email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    return res.data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setHousehold(null);
+  };
+
+  const refreshHousehold = async () => {
+    if (user?.household_id) {
+      const hRes = await householdApi.getMy();
+      setHousehold(hRes.data);
+    } else {
+      setHousehold(null);
+    }
+  };
+
+  const updateUser = (newUser) => {
+    setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
+  };
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      household,
+      loading,
+      login,
+      register,
+      logout,
+      refreshHousehold,
+      updateUser,
+      isAuthenticated: !!user,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
