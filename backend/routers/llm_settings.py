@@ -3,8 +3,17 @@ from ..models import LLMSettingsUpdate
 from ..dependencies import db, get_current_user, settings
 from datetime import datetime, timezone
 import httpx
+import os
 
 router = APIRouter(prefix="/settings/llm", tags=["LLM Settings"])
+
+# Available embedded models (GPT4All)
+EMBEDDED_MODELS = [
+    {"id": "Phi-3-mini-4k-instruct.Q4_0.gguf", "name": "Phi-3 Mini (Recommended)", "size": "2.2GB", "ram": "4GB"},
+    {"id": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "name": "Llama 3.2 3B", "size": "2.0GB", "ram": "4GB"},
+    {"id": "Mistral-7B-Instruct-v0.3-Q4_K_M.gguf", "name": "Mistral 7B", "size": "4.4GB", "ram": "8GB"},
+    {"id": "Meta-Llama-3-8B-Instruct-Q4_K_M.gguf", "name": "Llama 3 8B", "size": "4.9GB", "ram": "8GB"},
+]
 
 # Store LLM settings in memory (per-session) or DB for persistence
 # Initialize from env
@@ -12,6 +21,7 @@ default_llm_settings = {
     "provider": settings.llm_provider,
     "ollama_url": settings.ollama_url,
     "ollama_model": settings.ollama_model,
+    "embedded_model": settings.embedded_model
 }
 
 @router.get("")
@@ -23,31 +33,28 @@ async def get_llm_settings(user: dict = Depends(get_current_user)):
     if user_settings:
         return {
             **user_settings,
-            "available_providers": ["openai", "anthropic", "ollama"],
+            "available_providers": ["openai", "ollama", "embedded"],
+            "embedded_models": EMBEDDED_MODELS
         }
 
     return {
         "provider": default_llm_settings["provider"],
         "ollama_url": default_llm_settings["ollama_url"],
         "ollama_model": default_llm_settings["ollama_model"],
-        "available_providers": ["openai", "anthropic", "ollama"],
+        "embedded_model": default_llm_settings["embedded_model"],
+        "available_providers": ["openai", "ollama", "embedded"],
+        "embedded_models": EMBEDDED_MODELS
     }
 
 @router.put("")
 async def update_llm_settings(llm_settings: LLMSettingsUpdate, user: dict = Depends(get_current_user)):
     """Update LLM settings for the user"""
-    # Validate provider - embedded is not available in cloud deployment
-    if llm_settings.provider == "embedded":
-        raise HTTPException(
-            status_code=400,
-            detail="Embedded LLM is not available in cloud deployment. Please use 'openai', 'anthropic', or 'ollama'."
-        )
-    
     settings_doc = {
         "user_id": user["id"],
         "provider": llm_settings.provider,
         "ollama_url": llm_settings.ollama_url or "http://localhost:11434",
         "ollama_model": llm_settings.ollama_model or "llama3",
+        "embedded_model": llm_settings.embedded_model or "Phi-3-mini-4k-instruct.Q4_0.gguf",
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
 
@@ -67,10 +74,33 @@ async def test_llm_connection(
 ):
     """Test LLM connection with given settings"""
     if llm_settings.provider == "embedded":
-        return {
-            "success": False, 
-            "message": "Embedded LLM (GPT4All) is not available in cloud deployment. Please use OpenAI, Anthropic, or Ollama."
-        }
+        # Test embedded model
+        try:
+            from gpt4all import GPT4All
+            
+            model_name = llm_settings.embedded_model or "Phi-3-mini-4k-instruct.Q4_0.gguf"
+            models_path = settings.embedded_models_path
+            model_file = os.path.join(models_path, model_name)
+            
+            # Check if model exists locally
+            if os.path.exists(model_file):
+                return {
+                    "success": True,
+                    "message": f"Model {model_name} is ready",
+                    "model_downloaded": True,
+                    "available_models": EMBEDDED_MODELS
+                }
+            else:
+                return {
+                    "success": True,
+                    "message": f"Model {model_name} will be downloaded on first use (~2-5GB)",
+                    "model_downloaded": False,
+                    "available_models": EMBEDDED_MODELS
+                }
+        except ImportError:
+            return {"success": False, "message": "GPT4All not installed"}
+        except Exception as e:
+            return {"success": False, "message": str(e)}
     
     elif llm_settings.provider == "ollama":
         try:
@@ -91,17 +121,41 @@ async def test_llm_connection(
             return {"success": False, "message": "Cannot connect to Ollama. Is it running?"}
         except Exception as e:
             return {"success": False, "message": str(e)}
-    
-    elif llm_settings.provider == "anthropic":
-        api_key = settings.anthropic_api_key
-        if api_key:
-            return {"success": True, "message": "Anthropic API key configured"}
-        else:
-            return {"success": False, "message": "No Anthropic API key configured. Set ANTHROPIC_API_KEY in environment."}
-    
-    else:  # openai
+    else:
+        # Test OpenAI
         api_key = settings.openai_api_key
         if api_key:
             return {"success": True, "message": "OpenAI API key configured"}
         else:
-            return {"success": False, "message": "No OpenAI API key configured. Set OPENAI_API_KEY in environment."}
+            return {"success": False, "message": "No API key configured"}
+
+
+@router.post("/download-model")
+async def download_embedded_model(
+    model_name: str = "Phi-3-mini-4k-instruct.Q4_0.gguf",
+    user: dict = Depends(get_current_user)
+):
+    """Trigger download of an embedded model"""
+    try:
+        from gpt4all import GPT4All
+        import asyncio
+        
+        models_path = settings.embedded_models_path
+        os.makedirs(models_path, exist_ok=True)
+        
+        # Check if already downloaded
+        model_file = os.path.join(models_path, model_name)
+        if os.path.exists(model_file):
+            return {"success": True, "message": "Model already downloaded", "model": model_name}
+        
+        # Download in background - this will take a while
+        # GPT4All handles the download automatically when we create the instance
+        def download():
+            GPT4All(model_name=model_name, model_path=models_path, allow_download=True)
+        
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, download)
+        
+        return {"success": True, "message": f"Model {model_name} downloaded successfully"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}

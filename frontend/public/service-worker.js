@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mise-v2';
+const CACHE_NAME = 'kitchenry-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,7 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Mise: Caching static assets');
+      console.log('Kitchenry: Caching static assets');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -73,10 +73,10 @@ self.addEventListener('fetch', (event) => {
 
 // Handle push notifications
 self.addEventListener('push', (event) => {
-  console.log('Mise: Push notification received');
+  console.log('Kitchenry: Push notification received');
   
   let data = {
-    title: 'Mise',
+    title: 'Kitchenry',
     body: 'You have a new notification',
     icon: '/icons/icon-192x192.svg',
     badge: '/icons/icon-72x72.svg',
@@ -95,7 +95,7 @@ self.addEventListener('push', (event) => {
       },
     };
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Mise', options)
+      self.registration.showNotification(data.title || 'Kitchenry', options)
     );
   }
 
@@ -104,7 +104,7 @@ self.addEventListener('push', (event) => {
     icon: data.icon || '/icons/icon-192x192.svg',
     badge: data.badge || '/icons/icon-72x72.svg',
     vibrate: [100, 50, 100],
-    tag: data.tag || 'mise-notification',
+    tag: data.tag || 'kitchenry-notification',
     renotify: true,
     requireInteraction: data.requireInteraction || false,
     data: {
@@ -121,7 +121,7 @@ self.addEventListener('push', (event) => {
 
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
-  console.log('Mise: Notification clicked');
+  console.log('Kitchenry: Notification clicked');
   event.notification.close();
 
   const urlToOpen = event.notification.data?.url || '/';
@@ -158,12 +158,12 @@ self.addEventListener('notificationclick', (event) => {
 
 // Handle notification close
 self.addEventListener('notificationclose', (event) => {
-  console.log('Mise: Notification closed', event.notification.tag);
+  console.log('Kitchenry: Notification closed', event.notification.tag);
 });
 
 // Background sync for offline actions (future feature)
 self.addEventListener('sync', (event) => {
-  console.log('Mise: Background sync', event.tag);
+  console.log('Kitchenry: Background sync', event.tag);
   
   if (event.tag === 'sync-recipes') {
     event.waitUntil(syncRecipes());
@@ -172,7 +172,7 @@ self.addEventListener('sync', (event) => {
 
 async function syncRecipes() {
   // Future: sync offline recipe changes
-  console.log('Mise: Syncing recipes...');
+  console.log('Kitchenry: Syncing recipes...');
 }
 
 // Periodic background sync for meal reminders
@@ -184,5 +184,5 @@ self.addEventListener('periodicsync', (event) => {
 
 async function checkMealReminders() {
   // This would be called periodically to check for upcoming meals
-  console.log('Mise: Checking meal reminders...');
+  console.log('Kitchenry: Checking meal reminders...');
 }

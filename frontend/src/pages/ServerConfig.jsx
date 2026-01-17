@@ -28,7 +28,7 @@ export const ServerConfig = () => {
   // Preset options
   const presets = [
     { 
-      label: 'Mise Cloud',
+      label: 'Kitchenry Cloud',
       url: process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001',
       icon: Globe,
       description: 'Use the hosted version'
@@ -49,7 +49,7 @@ export const ServerConfig = () => {
 
   useEffect(() => {
     // Load saved server URL
-    const saved = localStorage.getItem('mise_server_url');
+    const saved = localStorage.getItem('kitchenry_server_url');
     if (saved) {
       setServerUrl(saved);
       testConnection(saved);
@@ -84,14 +84,14 @@ export const ServerConfig = () => {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.app === 'Mise') {
+        if (data.app === 'Kitchenry') {
           setServerStatus('success');
           setServerInfo(data);
           setServerUrl(normalizedUrl);
-          toast.success('Connected to Mise server!');
+          toast.success('Connected to Kitchenry server!');
         } else {
           setServerStatus('error');
-          toast.error('Server found but not a Mise instance');
+          toast.error('Server found but not a Kitchenry instance');
         }
       } else {
         setServerStatus('error');
@@ -112,7 +112,7 @@ export const ServerConfig = () => {
       return;
     }
 
-    localStorage.setItem('mise_server_url', serverUrl);
+    localStorage.setItem('kitchenry_server_url', serverUrl);
     toast.success('Server saved! Redirecting...');
     
     // Force reload to apply new server URL
@@ -132,7 +132,7 @@ export const ServerConfig = () => {
   const handleSkip = () => {
     // Use default cloud server
     const defaultUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-    localStorage.setItem('mise_server_url', defaultUrl);
+    localStorage.setItem('kitchenry_server_url', defaultUrl);
     navigate('/');
   };
 
@@ -149,7 +149,7 @@ export const ServerConfig = () => {
           <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
-          <span className="font-heading font-bold text-2xl">Mise</span>
+          <span className="font-heading font-bold text-2xl">Kitchenry</span>
         </div>
 
         {/* Config Card */}
@@ -160,7 +160,7 @@ export const ServerConfig = () => {
             </div>
             <div>
               <h1 className="font-heading text-xl font-bold">Connect to Server</h1>
-              <p className="text-sm text-muted-foreground">Enter your Mise server address</p>
+              <p className="text-sm text-muted-foreground">Enter your Kitchenry server address</p>
             </div>
           </div>
 
@@ -281,7 +281,7 @@ export const ServerConfig = () => {
 
         {/* Help Text */}
         <p className="text-center text-xs text-muted-foreground mt-6 px-4">
-          Self-hosting? Run the Mise server on your computer or home server,
+          Self-hosting? Run the Kitchenry server on your computer or home server,
           then enter its IP address above.
         </p>
       </motion.div>

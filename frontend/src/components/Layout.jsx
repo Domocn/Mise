@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { configApi } from '../lib/api';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -10,94 +9,58 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import {
-  ChefHat,
-  Home,
-  UtensilsCrossed,
-  CalendarDays,
-  ShoppingCart,
+import { 
+  ChefHat, 
+  Home, 
+  UtensilsCrossed, 
+  CalendarDays, 
+  ShoppingCart, 
   Refrigerator,
+  Users,
   LogOut,
+  User,
   Plus,
   Link as LinkIcon,
-  Settings,
-  Sparkles,
-  Globe,
-  Moon,
-  Sun,
-  User
+  Server,
+  Sparkles
 } from 'lucide-react';
 
 const navItems = [
-  { path: '/dashboard', label: 'Home', icon: Home, activeColor: 'text-mise', activeBg: 'bg-mise-light' },
-  { path: '/recipes', label: 'Recipes', icon: UtensilsCrossed, activeColor: 'text-coral', activeBg: 'bg-coral-light' },
-  { path: '/meal-planner', label: 'Meal Plan', icon: CalendarDays, activeColor: 'text-teal', activeBg: 'bg-teal-light' },
-  { path: '/shopping', label: 'Shopping', icon: ShoppingCart, activeColor: 'text-tangerine', activeBg: 'bg-tangerine-light' },
-  { path: '/fridge', label: 'My Fridge', icon: Refrigerator, activeColor: 'text-fresh', activeBg: 'bg-fresh-light' },
+  { path: '/dashboard', label: 'Home', icon: Home },
+  { path: '/recipes', label: 'Recipes', icon: UtensilsCrossed },
+  { path: '/meal-planner', label: 'Meal Plan', icon: CalendarDays },
+  { path: '/shopping', label: 'Shopping', icon: ShoppingCart },
+  { path: '/fridge', label: 'My Fridge', icon: Refrigerator },
 ];
 
 export const Layout = ({ children }) => {
   const { user, household, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [version, setVersion] = useState('1.0.0');
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('mise_dark_mode');
-      if (saved !== null) return saved === 'true';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    configApi.getConfig().then(res => {
-      if (res.data?.version) setVersion(res.data.version);
-    }).catch(() => {});
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    localStorage.setItem('mise_dark_mode', String(newMode));
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  // Get user initials for avatar
-  const getInitials = (name) => {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 glass border-b border-border/40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2 group" data-testid="logo-link">
-              <img 
-                src="/mise-logo.png" 
-                alt="Mise Logo" 
-                className="w-9 h-9 rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
-              />
-              <span className="font-heading font-bold text-lg text-foreground hidden sm:block">
-                Mise
+              <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+                <ChefHat className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-heading font-bold text-xl text-foreground hidden sm:block">
+                Kitchenry
               </span>
             </Link>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-0.5">
+            <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -106,31 +69,31 @@ export const Layout = ({ children }) => {
                     key={item.path}
                     to={item.path}
                     data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? `${item.activeBg} ${item.activeColor} shadow-sm`
-                        : 'text-foreground/70 hover:text-foreground hover:bg-muted'
+                        ? 'bg-sage text-white shadow-sm'
+                        : 'text-foreground/70 hover:text-foreground hover:bg-sage-light'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="hidden lg:inline">{item.label}</span>
+                    {item.label}
                   </Link>
                 );
               })}
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {/* Add Recipe Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
                     size="sm" 
-                    className="rounded-full bg-mise hover:bg-mise-dark shadow-sm"
+                    className="rounded-full bg-sage hover:bg-sage-dark shadow-sm"
                     data-testid="add-recipe-trigger"
                   >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline ml-1">Add</span>
+                    <Plus className="w-4 h-4 mr-1" />
+                    <span className="hidden sm:inline">Add Recipe</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -155,67 +118,34 @@ export const Layout = ({ children }) => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="rounded-full w-10 h-10 bg-mise-light"
+                    className="rounded-full w-10 h-10 bg-sage-light"
                     data-testid="user-menu-trigger"
                   >
-                    <User className="w-5 h-5 text-mise" />
+                    <User className="w-5 h-5 text-sage" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 p-0">
-                  {/* User Profile Header */}
-                  <div className="px-4 py-3 border-b border-border/60">
-                    <p className="font-semibold text-sm">{user?.name}</p>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-3 py-2">
+                    <p className="font-medium text-sm">{user?.name}</p>
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                     {household && (
-                      <p className="text-xs text-mise mt-1">{household.name}</p>
+                      <p className="text-xs text-sage mt-1">{household.name}</p>
                     )}
                   </div>
-
-                  <div className="py-1">
-                    {/* Language (placeholder for future) */}
-                    <DropdownMenuItem className="py-2.5 px-4 cursor-pointer">
-                      <Globe className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">Language</p>
-                        <p className="text-xs text-muted-foreground">English</p>
-                      </div>
-                    </DropdownMenuItem>
-
-                    {/* Theme Toggle */}
-                    <DropdownMenuItem onClick={toggleDarkMode} className="py-2.5 px-4 cursor-pointer">
-                      {darkMode ? (
-                        <Sun className="w-4 h-4 mr-3 text-muted-foreground" />
-                      ) : (
-                        <Moon className="w-4 h-4 mr-3 text-muted-foreground" />
-                      )}
-                      <div>
-                        <p className="text-sm">Theme</p>
-                        <p className="text-xs text-muted-foreground">{darkMode ? 'Dark' : 'Light'}</p>
-                      </div>
-                    </DropdownMenuItem>
-
-                    {/* Settings */}
-                    <DropdownMenuItem onClick={() => navigate('/settings')} className="py-2.5 px-4 cursor-pointer" data-testid="menu-settings">
-                      <Settings className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">Settings</p>
-                        <p className="text-xs text-muted-foreground">Manage your account</p>
-                      </div>
-                    </DropdownMenuItem>
-                  </div>
-
-                  <DropdownMenuSeparator className="my-0" />
-
-                  {/* Logout */}
-                  <DropdownMenuItem onClick={handleLogout} className="py-2.5 px-4 cursor-pointer text-terracotta hover:text-terracotta" data-testid="menu-logout">
-                    <LogOut className="w-4 h-4 mr-3" />
-                    <span className="text-sm">Logout</span>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/household')} data-testid="menu-household">
+                    <Users className="w-4 h-4 mr-2" />
+                    {household ? 'My Household' : 'Create Household'}
                   </DropdownMenuItem>
-
-                  {/* Version Footer */}
-                  <div className="px-4 py-2 border-t border-border/60">
-                    <p className="text-xs text-muted-foreground text-right">v{version}</p>
-                  </div>
+                  <DropdownMenuItem onClick={() => navigate('/settings')} data-testid="menu-settings">
+                    <Server className="w-4 h-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive" data-testid="menu-logout">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -224,7 +154,7 @@ export const Layout = ({ children }) => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden border-t border-border/40">
-          <div className="flex justify-around py-1.5">
+          <div className="flex justify-around py-2">
             {navItems.slice(0, 5).map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -233,11 +163,11 @@ export const Layout = ({ children }) => {
                   key={item.path}
                   to={item.path}
                   className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
-                    isActive ? item.activeColor : 'text-muted-foreground'
+                    isActive ? 'text-sage' : 'text-muted-foreground'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="text-[10px] mt-0.5">{item.label}</span>
+                  <span className="text-xs mt-1">{item.label}</span>
                 </Link>
               );
             })}
@@ -246,7 +176,7 @@ export const Layout = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
     </div>

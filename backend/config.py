@@ -11,7 +11,6 @@ class Settings:
         self.ollama_url: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
         self.ollama_model: str = os.getenv("OLLAMA_MODEL", "llama3")
         self.openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
-        self.anthropic_api_key: str | None = os.getenv("ANTHROPIC_API_KEY")
         
         # Embedded LLM (GPT4All) - runs completely offline
         self.embedded_model: str = os.getenv("EMBEDDED_MODEL", "Phi-3-mini-4k-instruct.Q4_0.gguf")

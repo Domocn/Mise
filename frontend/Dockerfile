@@ -12,9 +12,8 @@ RUN yarn install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build argument for backend URL - use placeholder for runtime injection
-# The actual URL will be injected by docker-entrypoint.sh at container startup
-ARG REACT_APP_BACKEND_URL=%REACT_APP_BACKEND_URL%
+# Build argument for backend URL
+ARG REACT_APP_BACKEND_URL=http://localhost:8001
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 
 # Build the app

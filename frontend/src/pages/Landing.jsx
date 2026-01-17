@@ -92,7 +92,7 @@ export const Landing = () => {
               <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center shadow-sm">
                 <ChefHat className="w-6 h-6 text-white" />
               </div>
-              <span className="font-heading font-bold text-xl">Mise</span>
+              <span className="font-heading font-bold text-xl">Kitchenry</span>
             </div>
             <div className="flex items-center gap-3">
               <Link to="/login">
@@ -281,7 +281,7 @@ export const Landing = () => {
               Your Data, Your Server
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              Run Mise on your own hardware. No cloud required, no subscriptions, complete privacy.
+              Run Kitchenry on your own hardware. No cloud required, no subscriptions, complete privacy.
             </p>
           </motion.div>
 
@@ -350,7 +350,7 @@ export const Landing = () => {
                 </Button>
               </Link>
               <a 
-                href="https://github.com/Domocn/Mise" 
+                href="https://github.com/Domocn/Recipe-App" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
@@ -376,11 +376,11 @@ export const Landing = () => {
               <div className="w-8 h-8 rounded-lg bg-sage flex items-center justify-center">
                 <ChefHat className="w-4 h-4 text-white" />
               </div>
-              <span className="font-heading font-semibold">Mise</span>
+              <span className="font-heading font-semibold">Kitchenry</span>
             </div>
             <div className="flex items-center gap-6">
               <a 
-                href="https://github.com/Domocn/Mise"
+                href="https://github.com/Domocn/Recipe-App"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-sage transition-colors"

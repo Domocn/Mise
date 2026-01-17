@@ -4,45 +4,6 @@ import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { InstallPrompt } from './components/InstallPrompt';
 
-// Error Boundary to catch React render errors
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error('React Error Boundary caught an error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ minHeight: '100vh', background: 'orange', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '16px', padding: '32px', maxWidth: '500px', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
-            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'red', marginBottom: '16px' }}>ERROR CAUGHT!</h1>
-            <p style={{ color: '#333', marginBottom: '16px' }}>
-              {this.state.error?.message || 'Unknown error'}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              style={{ padding: '12px 24px', background: 'blue', color: 'white', borderRadius: '999px', border: 'none', cursor: 'pointer', fontSize: '16px' }}
-            >
-              Refresh Page
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
 // Pages
 import { Landing } from './pages/Landing';
 import { Login, Register } from './pages/Auth';
@@ -63,49 +24,22 @@ import { ImportFromPlatform } from './pages/ImportFromPlatform';
 
 import './App.css';
 
-// Debug component to show auth state - ALWAYS visible for debugging
-const AuthDebug = () => {
-  const { isAuthenticated, loading, user } = useAuth();
-
-  return (
-    <div style={{
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      right: '0',
-      background: 'red',
-      color: 'white',
-      padding: '20px',
-      fontSize: '18px',
-      zIndex: 2147483647,
-      fontFamily: 'monospace',
-      fontWeight: 'bold',
-      textAlign: 'center'
-    }}>
-      DEBUG: Loading={loading ? 'TRUE' : 'FALSE'} | Auth={isAuthenticated ? 'TRUE' : 'FALSE'} | User={user ? user.email : 'NULL'}
-    </div>
-  );
-};
-
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-
-  console.log('[ProtectedRoute] loading:', loading, 'isAuthenticated:', isAuthenticated);
-
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-mise border-t-transparent rounded-full animate-spin" />
-        <span className="ml-4 text-gray-600">Loading auth...</span>
+        <div className="w-8 h-8 border-4 border-sage border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
-
+  
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
+  
   return children;
 };
 
@@ -116,7 +50,7 @@ const PublicRoute = ({ children }) => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-mise border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-sage border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -161,42 +95,23 @@ function AppRoutes() {
 
 function App() {
   return (
-    <ErrorBoundary>
-      {/* Debug OUTSIDE AuthProvider - should ALWAYS show if React works */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        background: 'blue',
-        color: 'yellow',
-        padding: '10px',
-        fontSize: '20px',
-        fontWeight: 'bold',
-        zIndex: 2147483647,
-        textAlign: 'center'
-      }}>
-        BLUE BAR = React is working
-      </div>
-      <BrowserRouter>
-        <AuthProvider>
-          <AuthDebug />
-          <AppRoutes />
-          <InstallPrompt />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: '#FFFFFF',
-                border: '1px solid #E6E2D6',
-                borderRadius: '1rem',
-              },
-              className: 'font-sans',
-            }}
-          />
-        </AuthProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+        <InstallPrompt />
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#FFFFFF',
+              border: '1px solid #E6E2D6',
+              borderRadius: '1rem',
+            },
+            className: 'font-sans',
+          }}
+        />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

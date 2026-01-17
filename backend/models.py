@@ -11,17 +11,11 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    allergies: Optional[List[str]] = None
-
 class UserResponse(BaseModel):
     id: str
     email: str
     name: str
     household_id: Optional[str] = None
-    allergies: Optional[List[str]] = []
     created_at: str
 
 # Household Models
@@ -37,11 +31,6 @@ class HouseholdResponse(BaseModel):
     owner_id: str
     member_ids: List[str]
     created_at: str
-    join_code: Optional[str] = None
-    join_code_expires: Optional[str] = None
-
-class JoinHouseholdRequest(BaseModel):
-    join_code: str
 
 # Recipe Models
 class Ingredient(BaseModel):
@@ -137,28 +126,11 @@ class FridgeSearchRequest(BaseModel):
     search_online: bool = False
 
 class LLMSettingsUpdate(BaseModel):
-    provider: str  # 'openai', 'anthropic', or 'ollama'
+    provider: str  # 'openai', 'ollama', or 'embedded'
     ollama_url: Optional[str] = 'http://localhost:11434'
     ollama_model: Optional[str] = 'llama3'
+    embedded_model: Optional[str] = 'Phi-3-mini-4k-instruct.Q4_0.gguf'
 
 class ImportPlatformRequest(BaseModel):
     platform: str  # 'paprika', 'cookmate', 'json', 'text'
     data: str  # JSON string or text content
-
-# Custom AI Prompts
-class CustomPromptsUpdate(BaseModel):
-    recipe_extraction: Optional[str] = None  # Custom prompt for recipe extraction
-    meal_planning: Optional[str] = None  # Custom prompt for meal planning
-    fridge_search: Optional[str] = None  # Custom prompt for fridge/ingredient search
-
-# Recipe Feedback (Would cook again?)
-class RecipeFeedback(BaseModel):
-    recipe_id: str
-    feedback: str  # 'yes', 'no', 'meh'
-
-class CookSessionCreate(BaseModel):
-    recipe_id: str
-    started_at: Optional[str] = None
-
-class CookSessionComplete(BaseModel):
-    feedback: str  # 'yes', 'no', 'meh'

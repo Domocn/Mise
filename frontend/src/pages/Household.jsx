@@ -218,7 +218,7 @@ export const Household = () => {
                     </DialogHeader>
                     <div className="space-y-4 pt-4">
                       <p className="text-sm text-muted-foreground">
-                        The user must already have a Mise account.
+                        The user must already have a Kitchenry account.
                       </p>
                       <div>
                         <Label>Email Address</Label>

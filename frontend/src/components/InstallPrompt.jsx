@@ -73,18 +73,18 @@ export const InstallPrompt = () => {
       </button>
       
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-xl bg-mise flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center flex-shrink-0">
           <Download className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="font-heading font-semibold text-sm">Install Mise</h3>
+          <h3 className="font-heading font-semibold text-sm">Install Kitchenry</h3>
           <p className="text-xs text-muted-foreground mt-1">
             Add to your home screen for quick access and offline support
           </p>
           <Button 
             onClick={handleInstall}
             size="sm"
-            className="mt-3 rounded-full bg-mise hover:bg-mise-dark text-xs h-8"
+            className="mt-3 rounded-full bg-sage hover:bg-sage-dark text-xs h-8"
             data-testid="install-pwa-btn"
           >
             Install App

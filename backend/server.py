@@ -11,7 +11,7 @@ from .dependencies import db, client
 from .routers import (
     auth, households, recipes, ai, meal_plans, shopping_lists,
     homeassistant, notifications, calendar, import_data, llm_settings,
-    favorites, prompts, cooking
+    favorites
 )
 
 # Setup Logging
@@ -41,21 +41,7 @@ async def lifespan(app: FastAPI):
     await app.state.http_client.aclose()
     client.close()
 
-<<<<<<< HEAD
 app = FastAPI(lifespan=lifespan, title="Kitchenry API")
-=======
-app = FastAPI(lifespan=lifespan, title="Mise API")
-
-# CORS - must be added before routes
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=settings.cors_origins.split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
->>>>>>> eeb2f0a8096c3f307ab184e32aaec8451355d15a
 api_router = APIRouter(prefix="/api")
 
 # Include routers
@@ -71,8 +57,6 @@ api_router.include_router(calendar.router)
 api_router.include_router(import_data.router)
 api_router.include_router(llm_settings.router)
 api_router.include_router(favorites.router)
-api_router.include_router(prompts.router)
-api_router.include_router(cooking.router)
 
 # Categories endpoint (simple enough to keep here or move to recipes)
 @api_router.get("/categories")
@@ -91,7 +75,7 @@ async def get_config():
     return {
         "llm_provider": settings.llm_provider,
         "ollama_model": settings.ollama_model if settings.llm_provider == 'ollama' else None,
-        "version": "1.1.0",
+        "version": "1.0.0",
         "features": {
             "ai_import": True,
             "ai_fridge_search": True,
@@ -104,36 +88,10 @@ async def health_check():
     """Health check endpoint for server discovery"""
     return {
         "status": "healthy",
-<<<<<<< HEAD
         "app": "Kitchenry",
         "version": "1.0.0",
-=======
-        "app": "Mise",
-        "version": "1.1.0",
->>>>>>> eeb2f0a8096c3f307ab184e32aaec8451355d15a
         "llm_provider": settings.llm_provider
     }
-
-@api_router.get("/shared/{share_id}")
-async def get_shared_recipe(share_id: str):
-    """Get a publicly shared recipe (no auth required)"""
-    from datetime import datetime, timezone
-
-    share = await db.recipe_shares.find_one({"id": share_id}, {"_id": 0})
-    if not share:
-        raise HTTPException(status_code=404, detail="Shared recipe not found")
-
-    # Check expiration
-    if share.get("expires_at"):
-        expires = datetime.fromisoformat(share["expires_at"].replace("Z", "+00:00"))
-        if datetime.now(timezone.utc) > expires:
-            raise HTTPException(status_code=410, detail="Share link has expired")
-
-    recipe = await db.recipes.find_one({"id": share["recipe_id"]}, {"_id": 0})
-    if not recipe:
-        raise HTTPException(status_code=404, detail="Recipe not found")
-
-    return recipe
 
 # Static Files
 @api_router.get("/uploads/{filename}")
@@ -154,3 +112,12 @@ async def get_upload(filename: str):
     return FileResponse(file_path)
 
 app.include_router(api_router)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=settings.cors_origins.split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

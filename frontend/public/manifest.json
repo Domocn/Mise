@@ -1,11 +1,11 @@
 {
-  "name": "Mise",
-  "short_name": "Mise",
+  "name": "Kitchenry",
+  "short_name": "Kitchenry",
   "description": "Self-hostable recipe app for families - organize recipes, plan meals, and share with your household",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8F7FF",
-  "theme_color": "#6C5CE7",
+  "background_color": "#FDFBF7",
+  "theme_color": "#4A6741",
   "orientation": "portrait-primary",
   "icons": [
     {

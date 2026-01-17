@@ -1,7 +1,34 @@
 from fastapi import APIRouter, HTTPException, Depends
-from dependencies import db, get_current_user
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel
+from typing import List, Optional
+import uuid
+from datetime import datetime, timezone
+import jwt
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
+security = HTTPBearer()
+
+db = None
+JWT_SECRET = None
+JWT_ALGORITHM = "HS256"
+
+def init(database, secret):
+    global db, JWT_SECRET
+    db = database
+    JWT_SECRET = secret
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user = await db.users.find_one({"id": payload["user_id"]}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.get("")
 async def get_favorites(user: dict = Depends(get_current_user)):

@@ -10,7 +10,7 @@ export const LoadingSpinner = ({ size = 'md', className = '' }) => {
   };
 
   return (
-    <Loader2 className={`animate-spin text-mise ${sizes[size]} ${className}`} />
+    <Loader2 className={`animate-spin text-sage ${sizes[size]} ${className}`} />
   );
 };
 
@@ -23,8 +23,8 @@ export const PageLoader = ({ message = 'Loading...' }) => {
         className="flex flex-col items-center gap-4"
       >
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-mise-light flex items-center justify-center">
-            <ChefHat className="w-8 h-8 text-mise" />
+          <div className="w-16 h-16 rounded-2xl bg-sage-light flex items-center justify-center">
+            <ChefHat className="w-8 h-8 text-sage" />
           </div>
           <div className="absolute -bottom-1 -right-1">
             <LoadingSpinner size="sm" />

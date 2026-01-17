@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug to help us improve Mise
+about: Report a bug to help us improve Kitchenry
 title: '[BUG] '
 labels: bug
 assignees: ''
