@@ -1,21 +1,29 @@
 import axios from 'axios';
 
-// Runtime backend URL - this placeholder gets replaced by docker-entrypoint.sh at container startup
-// DO NOT CHANGE this string - it must match the placeholder in docker-entrypoint.sh
-const RUNTIME_BACKEND_URL = '%REACT_APP_BACKEND_URL%';
-
-// Get server URL - check localStorage first, then runtime env, then fallback
+// Get server URL - check localStorage first, then runtime config, then build-time env, then fallback
 const getServerUrl = () => {
+  // Priority 1: User configured URL (from server config page)
   const savedUrl = localStorage.getItem('mise_server_url');
   if (savedUrl) {
     return savedUrl;
   }
-  // Check if runtime placeholder was replaced (doesn't start with %)
-  if (RUNTIME_BACKEND_URL && !RUNTIME_BACKEND_URL.startsWith('%')) {
-    return RUNTIME_BACKEND_URL;
+
+  // Priority 2: Runtime environment variable (injected at container startup via config.js)
+  if (window._env_ && window._env_.REACT_APP_BACKEND_URL) {
+    const runtimeUrl = window._env_.REACT_APP_BACKEND_URL;
+    // Check if it's a valid URL (not a placeholder)
+    if (runtimeUrl && !runtimeUrl.startsWith('__') && runtimeUrl.startsWith('http')) {
+      return runtimeUrl;
+    }
   }
-  // Fallback to build-time env or empty
-  return process.env.REACT_APP_BACKEND_URL || '';
+
+  // Priority 3: Build-time environment variable (for local development)
+  if (process.env.REACT_APP_BACKEND_URL && !process.env.REACT_APP_BACKEND_URL.startsWith('__')) {
+    return process.env.REACT_APP_BACKEND_URL;
+  }
+
+  // Priority 4: Empty (will trigger server config page)
+  return '';
 };
 
 // Check if server is configured

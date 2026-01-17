@@ -12,9 +12,9 @@ RUN npm ci --legacy-peer-deps
 # Copy source
 COPY . .
 
-# Build argument for backend URL
-# Can be set at build time, or will use placeholder for runtime injection
-ARG REACT_APP_BACKEND_URL=%REACT_APP_BACKEND_URL%
+# Build argument for backend URL (optional, mainly for local dev)
+# For production, runtime config via config.js is preferred
+ARG REACT_APP_BACKEND_URL=__PLACEHOLDER__
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Build the app

@@ -1,36 +1,63 @@
 #!/bin/bash
 
-# Diagnostic script to check if environment injection is working
+# Diagnostic script to check if runtime configuration injection is working
 
-echo "=== Checking Frontend Container Configuration ==="
+echo "========================================="
+echo "Mise Frontend - Configuration Check"
+echo "========================================="
 echo ""
 
 echo "1. Checking environment variable in container:"
-docker exec mise-frontend printenv | grep REACT_APP_BACKEND_URL || echo "   Variable not set!"
-echo ""
-
-echo "2. Checking if placeholder was replaced in built files:"
-docker exec mise-frontend sh -c "grep -r '%REACT_APP_BACKEND_URL%' /usr/share/nginx/html/*.js 2>/dev/null | head -5"
-if [ $? -eq 0 ]; then
-    echo "   ❌ PROBLEM: Placeholder still exists in built files!"
+ENV_VAR=$(docker exec mise-frontend printenv REACT_APP_BACKEND_URL 2>/dev/null)
+if [ -z "$ENV_VAR" ]; then
+    echo "   ❌ REACT_APP_BACKEND_URL not set in container!"
 else
-    echo "   ✓ Good: Placeholder was replaced"
+    echo "   ✓ REACT_APP_BACKEND_URL = $ENV_VAR"
 fi
 echo ""
 
-echo "3. Checking what backend URL is actually in the files:"
-docker exec mise-frontend sh -c "grep -o 'http[s]*://[^\"'\'' ]*:8001' /usr/share/nginx/html/static/js/*.js 2>/dev/null | head -3"
+echo "2. Checking if config.js exists:"
+docker exec mise-frontend test -f /usr/share/nginx/html/config.js && echo "   ✓ config.js exists" || echo "   ❌ config.js NOT FOUND!"
 echo ""
 
-echo "4. Container logs (last 20 lines):"
-docker logs mise-frontend --tail 20
+echo "3. Checking config.js content:"
+docker exec mise-frontend cat /usr/share/nginx/html/config.js 2>/dev/null | head -10
 echo ""
 
-echo "=== Recommended Actions ==="
-echo "If placeholder still exists:"
-echo "  1. Pull latest image: docker pull ghcr.io/domocn/mise-frontend:latest"
-echo "  2. Recreate container: docker-compose -f docker-compose.simple.yml up -d frontend"
+echo "4. Checking for unreplaced placeholders in config.js:"
+PLACEHOLDERS=$(docker exec mise-frontend grep -o '__[A-Z_]*__' /usr/share/nginx/html/config.js 2>/dev/null)
+if [ -n "$PLACEHOLDERS" ]; then
+    echo "   ❌ PROBLEM: Found unreplaced placeholders:"
+    echo "$PLACEHOLDERS"
+else
+    echo "   ✓ Good: All placeholders were replaced"
+fi
 echo ""
-echo "If URL is wrong in files:"
-echo "  1. Check your docker-compose.simple.yml has correct REACT_APP_BACKEND_URL"
-echo "  2. Restart container: docker-compose -f docker-compose.simple.yml restart frontend"
+
+echo "5. Container startup logs:"
+docker logs mise-frontend 2>&1 | grep -A 20 "Mise Frontend"
+echo ""
+
+echo "========================================="
+echo "Recommendations"
+echo "========================================="
+
+if [ -z "$ENV_VAR" ]; then
+    echo "❌ Environment variable not set:"
+    echo "   Check docker-compose.simple.yml has REACT_APP_BACKEND_URL defined"
+    echo ""
+fi
+
+if [ -n "$PLACEHOLDERS" ]; then
+    echo "❌ Placeholders not replaced:"
+    echo "   1. Check the entrypoint script ran successfully (see logs above)"
+    echo "   2. Restart container: docker-compose -f docker-compose.simple.yml restart frontend"
+    echo "   3. If issue persists, rebuild: docker-compose -f docker-compose.simple.yml up -d --force-recreate frontend"
+    echo ""
+fi
+
+echo "To test in browser:"
+echo "   1. Open http://$(hostname -I | awk '{print $1}'):3001"
+echo "   2. Open browser console and type: window._env_"
+echo "   3. Verify REACT_APP_BACKEND_URL shows correct value"
+echo ""
