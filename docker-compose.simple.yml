@@ -6,7 +6,7 @@ services:
     ports:
       - "3001:80"
     environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8001
+      - REACT_APP_BACKEND_URL=http://192.168.1.234:8001
     depends_on:
       - backend
 
