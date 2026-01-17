@@ -25,6 +25,7 @@ export const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
   const [mealPlans, setMealPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -32,17 +33,34 @@ export const Dashboard = () => {
 
   const loadData = async () => {
     try {
-      const [recipesRes, plansRes] = await Promise.all([
+      setError(null);
+      const [recipesRes, plansRes] = await Promise.allSettled([
         recipeApi.getAll(),
         mealPlanApi.getAll({
           start_date: format(startOfWeek(new Date()), 'yyyy-MM-dd'),
           end_date: format(endOfWeek(new Date()), 'yyyy-MM-dd'),
         }),
       ]);
-      setRecipes(recipesRes.data.slice(0, 6));
-      setMealPlans(plansRes.data);
+
+      if (recipesRes.status === 'fulfilled') {
+        setRecipes(recipesRes.value.data.slice(0, 6));
+      } else {
+        console.error('Failed to load recipes:', recipesRes.reason);
+      }
+
+      if (plansRes.status === 'fulfilled') {
+        setMealPlans(plansRes.value.data);
+      } else {
+        console.error('Failed to load meal plans:', plansRes.reason);
+      }
+
+      if (recipesRes.status === 'rejected' && plansRes.status === 'rejected') {
+        setError('Unable to connect to the server. Please check your configuration.');
+        toast.error('Cannot connect to server');
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
+      setError('An unexpected error occurred');
       toast.error('Failed to load data');
     } finally {
       setLoading(false);

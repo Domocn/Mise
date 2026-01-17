@@ -28,18 +28,15 @@ const api = axios.create({
   baseURL: getServerUrl() + '/api',
 });
 
-// Update baseURL when it might have changed
 api.interceptors.request.use((config) => {
-  // Check if server is configured
   if (!isServerConfigured()) {
-    // Redirect to server config page
-    if (window.location.pathname !== '/server') {
+    if (window.location.pathname !== '/server' && window.location.pathname !== '/') {
+      console.warn('Server not configured, redirecting to server config page');
       window.location.href = '/server';
     }
     return Promise.reject(new Error('Server not configured. Please configure your server URL.'));
   }
 
-  // Dynamically update baseURL in case it changed
   const currentUrl = getServerUrl();
   if (currentUrl) {
     config.baseURL = currentUrl + '/api';

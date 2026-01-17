@@ -50,9 +50,13 @@ export const Layout = ({ children }) => {
   });
 
   useEffect(() => {
-    configApi.getConfig().then(res => {
-      if (res.data?.version) setVersion(res.data.version);
-    }).catch(() => {});
+    configApi.getConfig()
+      .then(res => {
+        if (res.data?.version) setVersion(res.data.version);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch config:', error);
+      });
   }, []);
 
   const toggleDarkMode = () => {

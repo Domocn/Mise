@@ -20,28 +20,45 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
-      
+
       if (token && savedUser) {
         try {
-          setUser(JSON.parse(savedUser));
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+
           const res = await authApi.me();
           setUser(res.data);
           localStorage.setItem('user', JSON.stringify(res.data));
-          
-          // Fetch household
+
           if (res.data.household_id) {
-            const hRes = await householdApi.getMy();
-            setHousehold(hRes.data);
+            try {
+              const hRes = await householdApi.getMy();
+              setHousehold(hRes.data);
+            } catch (hError) {
+              console.error('Failed to fetch household:', hError);
+            }
           }
         } catch (error) {
           console.error('Auth init error:', error);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          if (error.response?.status === 401 || error.message?.includes('Server not configured')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+          } else {
+            const savedUserData = localStorage.getItem('user');
+            if (savedUserData) {
+              try {
+                setUser(JSON.parse(savedUserData));
+              } catch (e) {
+                console.error('Failed to parse saved user:', e);
+              }
+            }
+          }
         }
       }
       setLoading(false);
     };
-    
+
     initAuth();
   }, []);
 

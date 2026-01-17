@@ -28,16 +28,16 @@ export const TonightSuggestions = () => {
     try {
       const res = await cookingApi.getTonightSuggestions();
       if (res.data?.planned) {
-        // Dinner is already planned
         setPlannedRecipe(res.data.recipe);
         setSuggestions([]);
       } else {
-        // Show suggestions
         setPlannedRecipe(null);
         setSuggestions(res.data?.suggestions || []);
       }
     } catch (error) {
       console.error('Failed to load suggestions:', error);
+      setPlannedRecipe(null);
+      setSuggestions([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
