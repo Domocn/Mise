@@ -1,0 +1,177 @@
+{
+  "identity": {
+    "persona": "E1",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King.",
+    "anti_patterns": [
+      "Generic Bootstrap layouts",
+      "Pure black (#000000) text",
+      "Cold/Tech blue primary colors",
+      "Default Shadcn radius without customization"
+    ]
+  },
+  "theme": {
+    "mode": "light",
+    "vibe": "Warm, Cozy, Organic, Tactile",
+    "emotional_archetype": "Organic & Earthy"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Manrope, sans-serif",
+      "weights": ["600", "700", "800"],
+      "tracking": "tight",
+      "usage": "All section titles, hero text, modal headers"
+    },
+    "body": {
+      "font_family": "Inter, sans-serif",
+      "weights": ["400", "500"],
+      "leading": "relaxed",
+      "usage": "Paragraphs, inputs, labels, data tables"
+    },
+    "accents": {
+      "font_family": "Caveat, cursive",
+      "usage": "Personal notes, 'handwritten' annotations (optional)"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#4A6741",
+        "foreground": "#FFFFFF",
+        "hover": "#3A5233",
+        "light": "#E8F0E6"
+      },
+      "secondary": {
+        "DEFAULT": "#E07A5F",
+        "foreground": "#FFFFFF",
+        "hover": "#D0694E",
+        "light": "#FCECE8"
+      },
+      "background": {
+        "DEFAULT": "#FDFBF7",
+        "paper": "#FFFFFF",
+        "subtle": "#F5F2EB"
+      },
+      "text": {
+        "primary": "#2C3329",
+        "secondary": "#5C6658",
+        "muted": "#8C9688"
+      },
+      "border": {
+        "DEFAULT": "#E6E2D6",
+        "focus": "#4A6741"
+      },
+      "status": {
+        "success": "#4A6741",
+        "warning": "#E9C46A",
+        "error": "#E76F51",
+        "info": "#2A9D8F"
+      }
+    },
+    "gradients": {
+      "hero": "linear-gradient(135deg, #FDFBF7 0%, #E8F0E6 100%)",
+      "card_hover": "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(74,103,65,0.05) 100%)"
+    }
+  },
+  "spacing": {
+    "scale": "Tailwind default but doubled for breathing room",
+    "container_padding": "p-6 md:p-12 lg:p-16",
+    "section_gap": "gap-12 md:gap-24",
+    "component_gap": "gap-4 md:gap-6"
+  },
+  "components": {
+    "buttons": {
+      "radius": "rounded-full",
+      "shadow": "shadow-sm hover:shadow-md",
+      "transition": "all 0.2s ease-out",
+      "text_transform": "none",
+      "font_weight": "font-semibold"
+    },
+    "cards": {
+      "radius": "rounded-2xl",
+      "background": "bg-white",
+      "border": "border border-border/60",
+      "shadow": "shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
+      "padding": "p-6"
+    },
+    "inputs": {
+      "radius": "rounded-xl",
+      "background": "bg-background-subtle",
+      "border": "border-transparent focus:border-primary",
+      "shadow": "none"
+    }
+  },
+  "layout_strategies": {
+    "dashboard": {
+      "type": "Bento Grid",
+      "grid_cols": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4",
+      "gap": "gap-6",
+      "rules": "Use col-span-2 for main charts/calendars. Use col-span-1 for stats/lists."
+    },
+    "recipe_feed": {
+      "type": "Masonry / Responsive Grid",
+      "grid_cols": "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+      "gap": "gap-8"
+    },
+    "marketing_hero": {
+      "type": "Asymmetric Split",
+      "alignment": "left-aligned text, right-aligned organic image blob/shape"
+    }
+  },
+  "visual_enhancers": {
+    "texture": "Add subtle noise/grain overlay to the background (opacity 0.03) to reduce digital flatness.",
+    "shadows": "Use colored shadows (e.g., shadow-green-900/5) instead of pure black shadows.",
+    "glassmorphism": "Use backdrop-blur-md with bg-white/80 for sticky headers and floating action bars."
+  },
+  "motion": {
+    "library": "framer-motion",
+    "transitions": {
+      "default": { "duration": 0.3, "ease": "easeOut" },
+      "hover": { "duration": 0.2, "ease": "easeInOut" }
+    },
+    "animations": {
+      "fade_in_up": {
+        "initial": { "opacity": 0, "y": 20 },
+        "animate": { "opacity": 1, "y": 0 }
+      },
+      "stagger_children": {
+        "animate": { "transition": { "staggerChildren": 0.1 } }
+      }
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure text is #2C3329 on light backgrounds. Avoid light grey text.",
+    "focus_states": "Visible ring-2 ring-primary ring-offset-2",
+    "reduced_motion": "Respect prefers-reduced-motion media query"
+  },
+  "assets": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px or 2px, rounded line caps",
+      "color": "text-primary or text-secondary"
+    },
+    "images": {
+      "style": "High-key photography, natural light, top-down or 45-degree angle, messy-but-aesthetic plating.",
+      "placeholders": [
+        "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1556910103-1c02745a30bf?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80"
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "INSTALL framer-motion: `yarn add framer-motion`",
+    "UPDATE tailwind.config.js to include the new color palette and border radius.",
+    "CREATE a `Layout` component that applies the global background color and texture.",
+    "USE `sonner` for all notifications (success/error).",
+    "CUSTOMIZE Shadcn components: Override default radius to `0.75rem` or `1rem`.",
+    "AVOID pure black. Use the defined `text-primary` (#2C3329).",
+    "ENSURE all interactive elements have `data-testid`."
+  ],
+  "universal_guidelines": [
+    "Don't make generic centered layouts.",
+    "Create depth through layered design elements.",
+    "Use glass-morphism effects with backdrop filters.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable."
+  ]
+}
