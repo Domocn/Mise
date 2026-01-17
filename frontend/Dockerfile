@@ -20,6 +20,9 @@ ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 # Build the app
 RUN npm run build
 
+# Verify config.js made it into the build
+RUN ls -la /app/build/config.js || echo "WARNING: config.js not found in build!"
+
 # Production stage
 FROM nginx:alpine
 

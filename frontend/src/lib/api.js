@@ -5,6 +5,7 @@ const getServerUrl = () => {
   // Priority 1: User configured URL (from server config page)
   const savedUrl = localStorage.getItem('mise_server_url');
   if (savedUrl) {
+    console.log('[Mise Config] Using localStorage URL:', savedUrl);
     return savedUrl;
   }
 
@@ -13,16 +14,23 @@ const getServerUrl = () => {
     const runtimeUrl = window._env_.REACT_APP_BACKEND_URL;
     // Check if it's a valid URL (not a placeholder)
     if (runtimeUrl && !runtimeUrl.startsWith('__') && runtimeUrl.startsWith('http')) {
+      console.log('[Mise Config] Using runtime config URL:', runtimeUrl);
       return runtimeUrl;
+    } else {
+      console.warn('[Mise Config] Runtime config present but invalid:', runtimeUrl);
     }
+  } else {
+    console.warn('[Mise Config] No runtime config found. window._env_ =', window._env_);
   }
 
   // Priority 3: Build-time environment variable (for local development)
   if (process.env.REACT_APP_BACKEND_URL && !process.env.REACT_APP_BACKEND_URL.startsWith('__')) {
+    console.log('[Mise Config] Using build-time env URL:', process.env.REACT_APP_BACKEND_URL);
     return process.env.REACT_APP_BACKEND_URL;
   }
 
   // Priority 4: Empty (will trigger server config page)
+  console.warn('[Mise Config] No backend URL configured, will redirect to /server');
   return '';
 };
 
