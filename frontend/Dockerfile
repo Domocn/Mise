@@ -23,6 +23,11 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
+# OCI labels for GitHub Container Registry
+LABEL org.opencontainers.image.source="https://github.com/Domocn/Mise"
+LABEL org.opencontainers.image.description="Mise Frontend - React web application for recipe management"
+LABEL org.opencontainers.image.licenses="MIT"
+
 # Copy built files
 COPY --from=build /app/build /usr/share/nginx/html
 

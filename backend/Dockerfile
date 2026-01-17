@@ -1,5 +1,10 @@
 FROM python:3.11-slim
 
+# OCI labels for GitHub Container Registry
+LABEL org.opencontainers.image.source="https://github.com/Domocn/Mise"
+LABEL org.opencontainers.image.description="Mise Backend - FastAPI server for recipe management"
+LABEL org.opencontainers.image.licenses="MIT"
+
 WORKDIR /app
 
 # Install system dependencies (curl for health checks)
