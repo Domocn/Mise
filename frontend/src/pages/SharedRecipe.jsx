@@ -52,7 +52,7 @@ export const SharedRecipe = () => {
           <p className="text-muted-foreground mb-6">{error}</p>
           <Link to="/">
             <Button className="rounded-full bg-sage hover:bg-sage-dark">
-              Go to Kitchenry
+              Go to Mise
             </Button>
           </Link>
         </div>
@@ -71,11 +71,11 @@ export const SharedRecipe = () => {
             <div className="w-8 h-8 rounded-lg bg-sage flex items-center justify-center">
               <ChefHat className="w-4 h-4 text-white" />
             </div>
-            <span className="font-heading font-bold">Kitchenry</span>
+            <span className="font-heading font-bold">Mise</span>
           </Link>
           <Link to="/register">
             <Button variant="outline" size="sm" className="rounded-full">
-              Join Kitchenry
+              Join Mise
               <ExternalLink className="w-3 h-3 ml-2" />
             </Button>
           </Link>
@@ -189,7 +189,7 @@ export const SharedRecipe = () => {
               </p>
               <Link to="/register">
                 <Button className="rounded-full bg-sage hover:bg-sage-dark">
-                  Join Kitchenry Free
+                  Join Mise Free
                 </Button>
               </Link>
             </div>

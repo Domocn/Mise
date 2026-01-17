@@ -4,7 +4,7 @@ import "@/index.css";
 import App from "@/App";
 
 // Apply dark mode before render to prevent flash
-const savedDarkMode = localStorage.getItem('kitchenry_dark_mode');
+const savedDarkMode = localStorage.getItem('mise_dark_mode');
 if (savedDarkMode === 'true' || 
     (savedDarkMode === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
   document.documentElement.classList.add('dark');
@@ -15,10 +15,10 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
       .then((registration) => {
-        console.log('Kitchenry SW registered:', registration.scope);
+        console.log('Mise SW registered:', registration.scope);
       })
       .catch((error) => {
-        console.log('Kitchenry SW registration failed:', error);
+        console.log('Mise SW registration failed:', error);
       });
   });
 }

@@ -163,7 +163,7 @@ export const MealPlanner = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'kitchenry-meals.ics';
+      a.download = 'mise-meals.ics';
       a.click();
       window.URL.revokeObjectURL(url);
       

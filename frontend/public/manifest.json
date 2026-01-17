@@ -1,6 +1,6 @@
 {
-  "name": "Kitchenry",
-  "short_name": "Kitchenry",
+  "name": "Mise",
+  "short_name": "Mise",
   "description": "Self-hostable recipe app for families - organize recipes, plan meals, and share with your household",
   "start_url": "/",
   "display": "standalone",

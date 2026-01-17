@@ -43,7 +43,7 @@ export const Login = () => {
           <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
-          <span className="font-heading font-bold text-2xl">Kitchenry</span>
+          <span className="font-heading font-bold text-2xl">Mise</span>
         </Link>
 
         {/* Form Card */}
@@ -153,7 +153,7 @@ export const Register = () => {
           <div className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center shadow-sm">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
-          <span className="font-heading font-bold text-2xl">Kitchenry</span>
+          <span className="font-heading font-bold text-2xl">Mise</span>
         </Link>
 
         {/* Form Card */}

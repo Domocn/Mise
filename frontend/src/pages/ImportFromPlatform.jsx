@@ -42,7 +42,7 @@ const platforms = [
     description: 'Import from any JSON format',
     icon: '📄',
     format: 'Standard recipe JSON',
-    instructions: 'Use Kitchenry format or any structured recipe JSON'
+    instructions: 'Use Mise format or any structured recipe JSON'
   }
 ];
 

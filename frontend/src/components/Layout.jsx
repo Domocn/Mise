@@ -55,7 +55,7 @@ export const Layout = ({ children }) => {
                 <ChefHat className="w-6 h-6 text-white" />
               </div>
               <span className="font-heading font-bold text-xl text-foreground hidden sm:block">
-                Kitchenry
+                Mise
               </span>
             </Link>
 

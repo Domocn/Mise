@@ -1,0 +1,76 @@
+services:
+  mise:
+    image: domocn/mise:latest
+    container_name: mise-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - mise_uploads:/app/uploads
+      - mise_models:/app/models
+    environment:
+      # Core settings (required)
+      DATABASE_URL: mongodb://db:27017/mise
+      JWT_SECRET: <32-byte-secret>  # Generate with: openssl rand -base64 32
+
+      # ─────────────────────────────────────────────────────────────────────────
+      # AI CONFIGURATION (choose one)
+      # ─────────────────────────────────────────────────────────────────────────
+      
+      # Option 1: Embedded AI (100% offline, no setup needed)
+      # Models download automatically on first use
+      LLM_PROVIDER: embedded
+      # EMBEDDED_MODEL: Phi-3-mini-4k-instruct.Q4_0.gguf  # Default, 2.2GB, 4GB RAM
+      # EMBEDDED_MODEL: Llama-3.2-3B-Instruct-Q4_0.gguf  # 2.0GB, 4GB RAM
+      # EMBEDDED_MODEL: Mistral-7B-Instruct-v0.3.Q4_0.gguf  # 4.4GB, 8GB RAM
+
+      # Option 2: Ollama (faster, requires ollama service below)
+      # LLM_PROVIDER: ollama
+      # OLLAMA_URL: http://ollama:11434
+      # OLLAMA_MODEL: llama3
+
+      # Option 3: OpenAI (cloud, requires API key)
+      # LLM_PROVIDER: openai
+      # OPENAI_API_KEY: sk-your-api-key-here
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - db
+
+  db:
+    image: mongo:7
+    container_name: mise-db
+    restart: unless-stopped
+    volumes:
+      - mise_db:/data/db
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # OPTIONAL: Ollama for faster local AI (uncomment if using LLM_PROVIDER: ollama)
+  # ─────────────────────────────────────────────────────────────────────────
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: mise-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - mise_ollama:/root/.ollama
+  #   # Uncomment for NVIDIA GPU support:
+  #   # deploy:
+  #   #   resources:
+  #   #     reservations:
+  #   #       devices:
+  #   #         - driver: nvidia
+  #   #           count: 1
+  #   #           capabilities: [gpu]
+
+volumes:
+  mise_db:
+  mise_uploads:
+  mise_models:
+  # mise_ollama:  # Uncomment if using Ollama

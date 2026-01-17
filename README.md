@@ -1,298 +1,257 @@
-# Kitchenry 🍳
+# Mise 🍳
 
 A self-hostable recipe app for families. Organize recipes, plan meals, generate shopping lists, and share with your household.
 
+> *Mise* — from "mise en place," meaning everything in its place.
+
 ## Features
 
-- **Recipe Management**: Create, edit, and organize recipes with images, categories, and tags
-- **AI Import**: Paste any recipe URL and AI extracts it automatically
-- **Quick Add**: Paste text from any source and AI parses it into a recipe
-- **Batch Import**: Import recipes from Paprika, Cookmate, Recipe Keeper, or JSON
-- **Meal Planning**: Weekly calendar to plan breakfast, lunch, dinner, and snacks
-- **Auto Meal Plan**: Let AI generate a balanced weekly meal plan from your recipes
-- **Shopping Lists**: Auto-generate from recipes or create manually
-- **"What's in My Fridge"**: Enter ingredients you have, find matching recipes
-- **Family Sharing**: Create households and share everything with family members
-- **Recipe Sharing**: Share via link, copy as text, or download beautiful recipe cards
-- **Calendar Sync**: Export meal plans to Google Calendar, Apple Calendar, Outlook (iCal)
-- **Home Assistant**: REST API sensors for meal reminders and shopping list
-- **PWA Support**: Install on mobile devices for app-like experience
-- **Push Notifications**: Get meal reminders and shopping alerts
-- **Dark Mode**: Easy on the eyes with automatic system preference detection
-- **Local LLM**: Run AI features without any API keys using Ollama
-- **Embedded AI**: Fully offline AI that runs inside the app (no external services needed)
-- **Bug Tracker**: Report issues directly on GitHub
+- **Recipe Management** — Create, edit, and organize recipes with images, tags, and categories
+- **AI Import** — Paste any recipe URL and AI extracts it automatically
+- **Quick Add** — Paste raw text and AI parses it into a structured recipe
+- **Batch Import** — Import from Paprika, Cookmate, Recipe Keeper, or JSON
+- **Meal Planning** — Weekly calendar for breakfast, lunch, dinner, and snacks
+- **Auto Meal Plan** — AI generates a balanced weekly plan from your recipes
+- **Shopping Lists** — Auto-generate from meal plans or create manually
+- **What's in My Fridge** — Enter ingredients you have, find matching recipes
+- **Family Sharing** — Create households and share with family members
+- **Recipe Scaling** — Adjust servings and ingredients scale automatically
+- **Recipe Sharing** — Share via link, copy as text, or download recipe cards
+- **Calendar Sync** — Export to Google Calendar, Apple Calendar, Outlook
+- **Dark Mode** — System preference detection with manual toggle
+- **PWA Support** — Install on mobile for app-like experience
+- **Push Notifications** — Meal reminders and shopping alerts
+- **Offline AI** — Embedded AI that works without internet
 
-## Quick Start with Docker
+## Quick Start
 
-### Prerequisites
-- Docker & Docker Compose
-- 4GB+ RAM (8GB recommended for local LLM)
-
-### 1. Clone and Start
+### Option 1: Docker Compose (Command Line)
 
 ```bash
-git clone <your-repo>
-cd kitchenry
-
-# Start all services (MongoDB, Ollama, Backend, Frontend)
+git clone https://github.com/Domocn/Mise.git
+cd Mise
 docker-compose up -d
-
-# Pull the LLM model (first time only, ~4GB download)
-docker exec kitchenry-ollama ollama pull llama3
 ```
 
-### 2. Access the App
+Open **http://localhost:3000** and create an account.
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8001
-- **Ollama**: http://localhost:11434
+### Option 2: Portainer
 
-### 3. Connect from Mobile
+1. Go to **Stacks** → **Add Stack**
+2. Name it `mise`
+3. Choose one of:
+   - **Upload** — Upload the `docker-compose.yml` file
+   - **Repository** — Enter `https://github.com/Domocn/Mise`, compose path `docker-compose.yml`
+   - **Web editor** — Paste the docker-compose below
+4. Click **Deploy the stack**
+5. Open **http://your-server:3000**
 
-1. Find your computer's local IP: `ip addr` or `ipconfig`
-2. Open `http://YOUR_IP:3000` on your phone
-3. Tap "Add to Home Screen" to install the PWA
-4. In the app, go to Settings → Change Server → enter `http://YOUR_IP:8001`
+#### First Time Setup
+
+1. Generate a secret: `openssl rand -base64 32`
+2. Replace `<32-byte-secret>` in docker-compose with your generated key
+3. Deploy and create your account
+
+### Docker Compose File
+
+<details>
+<summary>Click to expand docker-compose.yml</summary>
+
+> **Note:** This is the minimal version. The full `docker-compose.yml` in the repo includes OpenPanel analytics and build-from-source options.
+
+```yaml
+services:
+  mise:
+    image: domocn/mise:latest
+    container_name: mise-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - mise_uploads:/app/uploads
+      - mise_models:/app/models
+    environment:
+      # Core settings (required)
+      DATABASE_URL: mongodb://db:27017/mise
+      JWT_SECRET: <32-byte-secret>  # Generate with: openssl rand -base64 32
+
+      # ─────────────────────────────────────────────────────────────────────────
+      # AI CONFIGURATION (choose one)
+      # ─────────────────────────────────────────────────────────────────────────
+      
+      # Option 1: Embedded AI (100% offline, no setup needed)
+      # Models download automatically on first use
+      LLM_PROVIDER: embedded
+      # EMBEDDED_MODEL: Phi-3-mini-4k-instruct.Q4_0.gguf  # Default, 2.2GB, 4GB RAM
+      # EMBEDDED_MODEL: Llama-3.2-3B-Instruct-Q4_0.gguf  # 2.0GB, 4GB RAM
+      # EMBEDDED_MODEL: Mistral-7B-Instruct-v0.3.Q4_0.gguf  # 4.4GB, 8GB RAM
+
+      # Option 2: Ollama (faster, requires ollama service below)
+      # LLM_PROVIDER: ollama
+      # OLLAMA_URL: http://ollama:11434
+      # OLLAMA_MODEL: llama3
+
+      # Option 3: OpenAI (cloud, requires API key)
+      # LLM_PROVIDER: openai
+      # OPENAI_API_KEY: sk-your-api-key-here
+
+      # Option 4: Claude/Anthropic (cloud, requires API key)
+      # LLM_PROVIDER: anthropic
+      # ANTHROPIC_API_KEY: sk-ant-your-api-key-here
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - db
+
+  db:
+    image: mongo:7
+    container_name: mise-db
+    restart: unless-stopped
+    volumes:
+      - mise_db:/data/db
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # OPTIONAL: Ollama for faster local AI (uncomment if using LLM_PROVIDER: ollama)
+  # ─────────────────────────────────────────────────────────────────────────
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: mise-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - mise_ollama:/root/.ollama
+
+volumes:
+  mise_db:
+  mise_uploads:
+  mise_models:
+```
+
+</details>
+
+## AI Setup
+
+Mise supports four AI providers. Choose one:
+
+### Option 1: Embedded (Easiest)
+
+No setup required. In Settings → AI → select **Embedded (100% Offline)** → choose a model → it downloads automatically.
+
+| Model | Download | RAM Required |
+|-------|----------|--------------|
+| Phi-3 Mini | 2.2 GB | 4 GB |
+| Llama 3.2 3B | 2.0 GB | 4 GB |
+| Mistral 7B | 4.4 GB | 8 GB |
+
+### Option 2: Claude (Recommended Cloud)
+
+In Settings → AI → select **Claude** → enter your [Anthropic API key](https://console.anthropic.com/settings/keys).
+
+Uses Claude Sonnet 4 — excellent for recipe parsing and meal planning.
+
+### Option 3: Ollama (Faster Local)
+
+```bash
+docker exec mise-ollama ollama pull llama3
+```
+
+In Settings → AI → select **Ollama (Local)**.
+
+### Option 4: OpenAI
+
+In Settings → AI → select **OpenAI** → enter your API key.
+
+## Services
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Mise | http://localhost:3000 | Web app + API |
+| MongoDB | localhost:27017 | Database |
+| Ollama (optional) | http://localhost:11434 | Faster local LLM |
 
 ## Configuration
 
-### Environment Variables
+Environment variables:
 
-Create a `.env` file in the root directory:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATABASE_URL` | (required) | MongoDB connection string |
+| `JWT_SECRET` | (required) | Auth token secret (32+ chars) |
+| `LLM_PROVIDER` | `embedded` | `embedded`, `anthropic`, `ollama`, or `openai` |
+| `EMBEDDED_MODEL` | Phi-3 Mini | Model for embedded AI |
+| `ANTHROPIC_API_KEY` | — | Anthropic API key (if using Claude) |
+| `OLLAMA_URL` | — | Ollama server URL (if using Ollama) |
+| `OPENAI_API_KEY` | — | OpenAI API key (if using OpenAI) |
 
-```env
-# Security (CHANGE THIS!)
-JWT_SECRET=your-super-secret-key-here
-
-# LLM Provider: 'ollama' (local) or 'openai' (cloud)
-LLM_PROVIDER=ollama
-
-# For Ollama (local LLM)
-OLLAMA_URL=http://ollama:11434
-OLLAMA_MODEL=llama3
-
-# For OpenAI (if using cloud)
-# LLM_PROVIDER=openai
-# EMERGENT_LLM_KEY=your-api-key
-```
-
-### Ollama Models
-
-Choose a model based on your hardware:
-
-| Model | RAM Required | Speed | Quality |
-|-------|-------------|-------|---------|
-| `llama3` | 8GB | Medium | Best |
-| `mistral` | 8GB | Fast | Good |
-| `phi3` | 4GB | Fastest | Good |
-| `llama3:70b` | 48GB | Slow | Excellent |
-
-Change model:
-```bash
-# Pull new model
-docker exec kitchenry-ollama ollama pull mistral
-
-# Update docker-compose.yml
-OLLAMA_MODEL=mistral
-
-# Restart backend
-docker-compose restart backend
-```
-
-### Embedded AI (100% Offline)
-
-For truly offline operation without any external services, use the embedded AI option:
-
-1. In the app, go to Settings → AI Settings
-2. Select "Embedded" as the provider
-3. Choose a model (Phi-3 Mini recommended for most systems)
-4. The model downloads automatically on first use (~2-5GB)
-
-**Available embedded models:**
-
-| Model | Download Size | RAM Required | Quality |
-|-------|--------------|--------------|---------|
-| Phi-3 Mini (Recommended) | 2.2GB | 4GB | Good |
-| Llama 3.2 3B | 2.0GB | 4GB | Good |
-| Mistral 7B | 4.4GB | 8GB | Better |
-
-**When to use embedded vs Ollama:**
-- **Embedded**: Simpler setup, no extra service to manage, works on any system
-- **Ollama**: More model choices, faster on supported hardware, better for power users
-
-### GPU Acceleration (NVIDIA)
-
-Uncomment the GPU section in `docker-compose.yml`:
-
-```yaml
-ollama:
-  deploy:
-    resources:
-      reservations:
-        devices:
-          - driver: nvidia
-            count: 1
-            capabilities: [gpu]
-```
-
-## Manual Installation
-
-### Backend
+## Commands
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install -r requirements.txt
+# Start
+docker-compose up -d
 
-# Set environment variables
-export MONGO_URL="mongodb://localhost:27017"
-export DB_NAME="kitchenry"
-export JWT_SECRET="your-secret"
-export LLM_PROVIDER="ollama"
-export OLLAMA_URL="http://localhost:11434"
+# Stop
+docker-compose down
 
-# Run
-uvicorn server:app --host 0.0.0.0 --port 8001
+# View logs
+docker-compose logs -f mise
+
+# Update to latest version
+docker-compose pull
+docker-compose up -d
+
+# Reset database (WARNING: deletes all data)
+docker-compose down -v
+docker-compose up -d
 ```
-
-### Frontend
-
-```bash
-cd frontend
-yarn install
-REACT_APP_BACKEND_URL=http://localhost:8001 yarn start
-```
-
-### Ollama
-
-```bash
-# Install Ollama: https://ollama.ai
-ollama serve
-ollama pull llama3
-```
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Get current user |
-| GET | `/api/recipes` | List recipes |
-| POST | `/api/recipes` | Create recipe |
-| GET | `/api/recipes/:id` | Get recipe |
-| PUT | `/api/recipes/:id` | Update recipe |
-| DELETE | `/api/recipes/:id` | Delete recipe |
-| POST | `/api/recipes/:id/share` | Create share link |
-| GET | `/api/shared/:id` | Get shared recipe (public) |
-| POST | `/api/ai/import-url` | AI extract recipe from URL |
-| POST | `/api/ai/import-text` | AI parse pasted recipe text |
-| POST | `/api/ai/auto-meal-plan` | AI generate weekly meal plan |
-| POST | `/api/ai/fridge-search` | Find recipes by ingredients |
-| GET | `/api/meal-plans` | List meal plans |
-| POST | `/api/meal-plans` | Create meal plan |
-| GET | `/api/calendar/ical` | Export meals as iCal |
-| GET | `/api/shopping-lists` | List shopping lists |
-| POST | `/api/shopping-lists` | Create shopping list |
-| POST | `/api/import/platform` | Import from Paprika/Cookmate |
-| GET | `/api/homeassistant/today` | Today's meals for HA |
-| GET | `/api/homeassistant/shopping` | Shopping list for HA |
-| POST | `/api/notifications/subscribe` | Subscribe to push |
-| GET | `/api/health` | Health check |
-
-## Home Assistant Integration
-
-Add to your `configuration.yaml`:
-
-```yaml
-rest:
-  - resource: http://YOUR_KITCHENRY_IP:8001/api/homeassistant/today
-    headers:
-      Authorization: Bearer YOUR_TOKEN
-    sensor:
-      - name: "Kitchenry Today's Meals"
-        value_template: "{{ value_json.summary }}"
-        json_attributes:
-          - meals
-          - next_meal
-          - count
-
-  - resource: http://YOUR_KITCHENRY_IP:8001/api/homeassistant/shopping
-    headers:
-      Authorization: Bearer YOUR_TOKEN
-    sensor:
-      - name: "Kitchenry Shopping"
-        value_template: "{{ value_json.unchecked }} items to buy"
-        json_attributes:
-          - items
-          - list_name
-```
-
-Create automations for meal reminders:
-
-```yaml
-automation:
-  - alias: "Dinner Reminder"
-    trigger:
-      platform: time
-      at: "17:30:00"
-    action:
-      service: notify.mobile_app
-      data:
-        title: "Time to cook!"
-        message: "{{ state_attr('sensor.kitchenry_today_s_meals', 'next_meal').recipe_title }}"
-```
-
-## Calendar Sync
-
-Export your meal plan to Google Calendar, Apple Calendar, or Outlook:
-
-1. Go to Meal Planner → Click "Export"
-2. Download the `.ics` file
-3. Import into your calendar app
-
-Or set up automatic sync by subscribing to:
-`http://YOUR_IP:8001/api/calendar/ical?start_date=2024-01-01&end_date=2024-12-31`
-
-## Bug Reports & Feature Requests
-
-Found a bug or have an idea? Report it on GitHub:
-
-- [Report a Bug](https://github.com/Domocn/Recipe-App/issues/new?template=bug_report.md&labels=bug)
-- [Request a Feature](https://github.com/Domocn/Recipe-App/issues/new?template=feature_request.md&labels=enhancement)
-- [Community Discussions](https://github.com/Domocn/Recipe-App/discussions)
 
 ## Tech Stack
 
-- **Frontend**: React 19, Tailwind CSS, Shadcn UI, Framer Motion
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
-- **AI**: Ollama (local) or OpenAI (cloud)
-- **Containerization**: Docker
+- **Frontend:** React, Tailwind CSS, shadcn/ui, Framer Motion
+- **Backend:** FastAPI, Python
+- **Database:** MongoDB
+- **AI:** Claude (Anthropic), OpenAI, Ollama, GPT4All (embedded)
+- **Infrastructure:** Docker, Nginx
+
+## Reverse Proxy (Optional)
+
+If running behind Nginx Proxy Manager, Traefik, or Caddy:
+
+```
+your-domain.com → localhost:3000
+```
+
+Add your domain to `TRUSTED_ORIGINS`:
+
+```yaml
+environment:
+  TRUSTED_ORIGINS: https://your-domain.com
+```
 
 ## Troubleshooting
 
-### Ollama not responding
+| Issue | Solution |
+|-------|----------|
+| Can't connect to database | Check if `mise-db` container is running |
+| AI features not working | Check logs: `docker-compose logs -f mise` |
+| App won't start | Verify `JWT_SECRET` is set (not placeholder) |
+| Port already in use | Change port `3000:3000` to `3001:3000` |
+
+### View Logs
+
 ```bash
-# Check if Ollama is running
-docker logs kitchenry-ollama
+# All services
+docker-compose logs -f
 
-# Restart Ollama
-docker-compose restart ollama
+# Just the app
+docker-compose logs -f mise
 ```
-
-### AI features slow
-- Use a smaller model: `phi3` instead of `llama3`
-- Enable GPU acceleration
-- Increase Docker memory limit
-
-### Can't connect from mobile
-- Ensure phone is on same WiFi network
-- Check firewall allows ports 3000 and 8001
-- Use computer's local IP, not `localhost`
 
 ## License
 
-MIT - Feel free to self-host, modify, and share!
+MIT

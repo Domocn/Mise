@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for Kitchenry
+about: Suggest a new feature for Mise
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

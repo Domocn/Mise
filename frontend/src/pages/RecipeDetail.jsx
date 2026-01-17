@@ -96,7 +96,7 @@ export const RecipeDetail = () => {
     });
     
     text += `\n─────────────────────────────\n`;
-    text += `Shared from Kitchenry`;
+    text += `Shared from Mise`;
     
     return text;
   };
@@ -245,7 +245,7 @@ export const RecipeDetail = () => {
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 32px Manrope, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🍳 Made with Kitchenry', width / 2, height - 40);
+      ctx.fillText('🍳 Made with Mise', width / 2, height - 40);
       
       // Download
       const dataUrl = canvas.toDataURL('image/png');

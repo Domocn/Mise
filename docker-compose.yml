@@ -4,26 +4,26 @@ services:
   # MongoDB Database
   mongodb:
     image: mongo:7
-    container_name: kitchenry-db
+    container_name: mise-db
     restart: unless-stopped
     volumes:
       - mongodb_data:/data/db
     environment:
-      - MONGO_INITDB_DATABASE=kitchenry
+      - MONGO_INITDB_DATABASE=mise
     networks:
-      - kitchenry-network
+      - mise-network
 
   # Ollama Local LLM (optional - for AI features without API)
   ollama:
     image: ollama/ollama:latest
-    container_name: kitchenry-ollama
+    container_name: mise-ollama
     restart: unless-stopped
     volumes:
       - ollama_data:/root/.ollama
     ports:
       - "11434:11434"
     networks:
-      - kitchenry-network
+      - mise-network
     # Uncomment for GPU support (NVIDIA)
     # deploy:
     #   resources:
@@ -38,13 +38,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: kitchenry-backend
+    container_name: mise-backend
     restart: unless-stopped
     ports:
       - "8001:8001"
     environment:
       - MONGO_URL=mongodb://mongodb:27017
-      - DB_NAME=kitchenry
+      - DB_NAME=mise
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-key-change-me}
       - CORS_ORIGINS=*
       # LLM Configuration - choose one:
@@ -66,27 +66,26 @@ services:
       - mongodb
       - ollama
     networks:
-      - kitchenry-network
+      - mise-network
 
   # Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - REACT_APP_BACKEND_URL=http://localhost:8001
-    container_name: kitchenry-frontend
+    container_name: mise-frontend
     restart: unless-stopped
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8001
+      # Set this to your server's IP/hostname accessible from client browsers
+      - REACT_APP_BACKEND_URL=${BACKEND_URL:-http://localhost:8001}
       - REACT_APP_OPENPANEL_URL=http://localhost:3002/api
       - REACT_APP_OPENPANEL_CLIENT_ID=00000000-0000-0000-0000-000000000000
     depends_on:
       - backend
     networks:
-      - kitchenry-network
+      - mise-network
 
   # OpenPanel Services
   op-db:
@@ -99,7 +98,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -114,7 +113,7 @@ services:
       - op-kv-data:/data
     command: ["redis-server", "--maxmemory-policy", "noeviction"]
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping"]
       interval: 10s
@@ -138,7 +137,7 @@ services:
         soft: 262144
         hard: 262144
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", 'clickhouse-client --query "SELECT 1"']
       interval: 10s
@@ -179,7 +178,7 @@ services:
     ports:
       - "3002:3000"
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/healthcheck || exit 1"]
       interval: 10s
@@ -200,7 +199,7 @@ services:
     ports:
       - "3001:3000"
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/api/healthcheck || exit 1"]
       interval: 10s
@@ -221,7 +220,7 @@ services:
       - CLICKHOUSE_URL=http://default:password@op-ch:8123
       - DATABASE_URL=postgresql://postgres:postgres@op-db:5432/postgres?schema=public
     networks:
-      - kitchenry-network
+      - mise-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/healthcheck || exit 1"]
       interval: 10s
@@ -239,5 +238,5 @@ volumes:
   op-ch-logs:
 
 networks:
-  kitchenry-network:
+  mise-network:
     driver: bridge

@@ -77,7 +77,7 @@ export const InstallPrompt = () => {
           <Download className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="font-heading font-semibold text-sm">Install Kitchenry</h3>
+          <h3 className="font-heading font-semibold text-sm">Install Mise</h3>
           <p className="text-xs text-muted-foreground mt-1">
             Add to your home screen for quick access and offline support
           </p>
